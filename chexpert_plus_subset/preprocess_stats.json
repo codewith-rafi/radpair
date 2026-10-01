@@ -1,0 +1,24 @@
+{
+  "u_policy": "ignore",
+  "u_policy_note": "Irvin U-Ignore: mask uncertain labels in disease loss/metrics when used",
+  "chexbert_source": "$CHEXPERT_PLUS_ROOT/chexbert_labels/impression_fixed.json",
+  "chexbert_section": "impression_fixed",
+  "n_subset": 15000,
+  "n_chexbert_join_miss": 0,
+  "train": {
+    "n": 10293,
+    "n_unique_report_text": 10068,
+    "n_dup_report_text_extra": 225,
+    "n_report_text_lt_50_chars": 8
+  },
+  "val": {
+    "n": 1518,
+    "n_unique_report_text": 1484,
+    "n_dup_report_text_extra": 34,
+    "n_report_text_lt_50_chars": 0
+  },
+  "dicom_preprocess": "chambon_appendix_a",
+  "backend": "cv2",
+  "text_field": "findings_plus_impression",
+  "text_format": "raw findings\\nimpression (no IU Findings:/Impression: prefixes)"
+}

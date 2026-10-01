@@ -1,0 +1,11 @@
+{
+  "cache_root": "chexpert_plus_subset/images_chambon",
+  "n_jobs": 3189,
+  "n_ok": 3189,
+  "n_fail": 0,
+  "jpeg_quality": 95,
+  "force": false,
+  "dicom_preprocess": "chambon_appendix_a",
+  "backend": "cv2",
+  "fails": []
+}
