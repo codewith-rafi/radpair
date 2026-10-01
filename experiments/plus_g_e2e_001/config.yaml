@@ -1,0 +1,43 @@
+# Plus G_e2e B (partial): ResNet layer4 + BioClinicalBERT last-6 layers + projections.
+# No LoRA. Same recipe as plus_g1_freezeproj_003 / plus_g_peft_001 for fair 3-way.
+# Early stop on val i2t R@1. Abort if train512 R@1>=0.99 and val < 5x chance.
+# Always run in tmux:
+#   tmux new -s plus_e2e
+#   activate your conda/venv
+#   cd $RADPAIR_ROOT
+#   export CUDA_VISIBLE_DEVICES=1
+#   python scripts/train_plus_g_e2e.py --config configs/plus_g_e2e.yaml
+# Detach: Ctrl-b d.
+train_manifest: data/processed/plus_train_manifest.csv
+val_manifest: data/processed/plus_val_manifest.csv
+seed: 42
+text_encoder: models/Bio_ClinicalBERT
+image_cache_root: chexpert_plus_subset/images_chambon
+dicom_preprocess: chambon_appendix_a
+u_policy: ignore
+
+max_text_length: 256
+embed_dim: 256
+tau: 0.07
+learnable_tau: false
+
+e2e_recipe: last_block_vision_plus_last6_bert
+freeze_image: last_block
+freeze_text: last_6_layers
+
+batch_size: 32
+max_epochs: 40
+early_stop_patience: 8
+lr: 0.001
+backbone_lr: 0.00001
+weight_decay: 0.01
+num_workers: 8
+train_eval_n: 512
+n_shuffle: 5
+amp: true
+abort_train_r1: 0.99
+
+expected_n_train: 10293
+expected_n_val: 1518
+
+experiment_dir: experiments/plus_g_e2e_001

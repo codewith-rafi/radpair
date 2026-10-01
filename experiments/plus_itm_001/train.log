@@ -1,0 +1,54 @@
+device=cuda:0 amp=True n_train=10293 n_val=1518 cache=chexpert_plus_subset/images_chambon ckpt=./experiments/plus_g_peft_001/checkpoint.pt python=python
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights:  93%|█████████▎| 185/199 [00:00<00:00, 1848.88it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 1093.27it/s]
+[transformers] [1mBertModel LOAD REPORT[0m from: ./models/Bio_ClinicalBERT
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+itm_head_params=65793 encoder_frozen=True min_delta=0.001
+eval untrained ITM head…
+untrained_val loss=0.6940 auroc=0.49710045115183454 accuracy=0.5
+epoch 001  train_loss 0.5324  val_loss 0.6684  val_itm_auroc 0.6774  val_itm_acc 0.6235
+epoch 002  train_loss 0.4161  val_loss 0.6947  val_itm_auroc 0.6859  val_itm_acc 0.6350
+epoch 003  train_loss 0.3721  val_loss 0.7015  val_itm_auroc 0.6889  val_itm_acc 0.6410
+epoch 004  train_loss 0.3454  val_loss 0.7288  val_itm_auroc 0.6907  val_itm_acc 0.6397
+epoch 005  train_loss 0.3345  val_loss 0.7340  val_itm_auroc 0.6956  val_itm_acc 0.6420
+epoch 006  train_loss 0.3201  val_loss 0.7591  val_itm_auroc 0.6951  val_itm_acc 0.6406
+epoch 007  train_loss 0.3104  val_loss 0.7562  val_itm_auroc 0.6971  val_itm_acc 0.6426
+epoch 008  train_loss 0.3058  val_loss 0.7535  val_itm_auroc 0.6983  val_itm_acc 0.6495
+epoch 009  train_loss 0.2995  val_loss 0.7627  val_itm_auroc 0.6969  val_itm_acc 0.6403
+epoch 010  train_loss 0.2865  val_loss 0.7806  val_itm_auroc 0.6959  val_itm_acc 0.6400
+epoch 011  train_loss 0.2838  val_loss 0.7968  val_itm_auroc 0.6966  val_itm_acc 0.6433
+epoch 012  train_loss 0.2823  val_loss 0.7788  val_itm_auroc 0.6980  val_itm_acc 0.6413
+epoch 013  train_loss 0.2760  val_loss 0.7967  val_itm_auroc 0.6990  val_itm_acc 0.6423
+epoch 014  train_loss 0.2706  val_loss 0.7916  val_itm_auroc 0.7018  val_itm_acc 0.6462
+epoch 015  train_loss 0.2703  val_loss 0.7935  val_itm_auroc 0.7001  val_itm_acc 0.6486
+epoch 016  train_loss 0.2652  val_loss 0.8087  val_itm_auroc 0.6962  val_itm_acc 0.6459
+epoch 017  train_loss 0.2594  val_loss 0.8091  val_itm_auroc 0.6976  val_itm_acc 0.6433
+epoch 018  train_loss 0.2553  val_loss 0.8264  val_itm_auroc 0.6984  val_itm_acc 0.6403
+epoch 019  train_loss 0.2505  val_loss 0.8220  val_itm_auroc 0.6990  val_itm_acc 0.6430
+epoch 020  train_loss 0.2460  val_loss 0.8325  val_itm_auroc 0.7016  val_itm_acc 0.6436
+epoch 021  train_loss 0.2507  val_loss 0.8290  val_itm_auroc 0.6984  val_itm_acc 0.6423
+epoch 022  train_loss 0.2463  val_loss 0.8246  val_itm_auroc 0.7021  val_itm_acc 0.6413
+{
+  "best_epoch": 14,
+  "best_val_itm_auroc": 0.7018372850345698,
+  "best_val_itm_accuracy": 0.6462450592885376,
+  "early_stopped": true,
+  "stopped_at_epoch": 22,
+  "itm_head_params": 65793
+}
+wrote ./experiments/plus_itm_001/metrics.json
+ITM_EXIT:0

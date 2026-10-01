@@ -1,0 +1,29 @@
+device=cuda:0 amp=True n_test=3189 cache=chexpert_plus_subset/images_chambon peft=./experiments/plus_g_peft_001/checkpoint.pt python=python
+SEALED TEST: one-shot; do not tune from these metrics; F+I + PEFT_001
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights:  69%|██████▉   | 138/199 [00:00<00:00, 1373.31it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 1890.90it/s]
+[transformers] [1mBertModel LOAD REPORT[0m from: ./models/Bio_ClinicalBERT
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+retrieval embed…
+  retrieval i2t_R@1=0.0088 t2i_R@1=0.0103 chance=0.000314 shuffle_i2t=0.0004
+disease + missing-modality…
+  image_only macro_auroc=0.7117 macro_f1=0.2045
+  text_only macro_auroc=0.8589 macro_f1=0.4818
+ITM…
+  itm auroc=0.6942 acc=0.6419
+wrote ./experiments/plus_sealed_test_001/metrics.json
+SEALED_TEST_EXIT:0

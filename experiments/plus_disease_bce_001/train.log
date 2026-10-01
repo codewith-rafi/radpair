@@ -1,0 +1,237 @@
+device=cuda:0 amp=True n_train=10293 n_val=1518 cache=chexpert_plus_subset/images_chambon ckpt=./experiments/plus_g_peft_001/checkpoint.pt python=python
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 2008.62it/s]
+[transformers] [1mBertModel LOAD REPORT[0m from: ./models/Bio_ClinicalBERT
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+disease_head_params=3598 encoder_frozen=True
+./scripts/train_plus_disease.py:221: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler(enabled=use_amp)
+eval untrained disease head…
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+untrained_val loss=0.6977 macro_auroc=0.47746186148042774 macro_f1_per_label=0.16761796165451745
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 001  train_loss 0.4872  val_loss 0.3852  val_macro_auroc 0.6074  val_macro_f1 0.1674
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 002  train_loss 0.3556  val_loss 0.3406  val_macro_auroc 0.6285  val_macro_f1 0.1762
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 003  train_loss 0.3308  val_loss 0.3285  val_macro_auroc 0.6428  val_macro_f1 0.1783
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 004  train_loss 0.3221  val_loss 0.3237  val_macro_auroc 0.6538  val_macro_f1 0.1807
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 005  train_loss 0.3177  val_loss 0.3213  val_macro_auroc 0.6616  val_macro_f1 0.1824
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 006  train_loss 0.3152  val_loss 0.3199  val_macro_auroc 0.6679  val_macro_f1 0.1859
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 007  train_loss 0.3132  val_loss 0.3196  val_macro_auroc 0.6734  val_macro_f1 0.1883
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 008  train_loss 0.3119  val_loss 0.3190  val_macro_auroc 0.6773  val_macro_f1 0.1904
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 009  train_loss 0.3110  val_loss 0.3187  val_macro_auroc 0.6801  val_macro_f1 0.1907
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 010  train_loss 0.3102  val_loss 0.3183  val_macro_auroc 0.6828  val_macro_f1 0.1940
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 011  train_loss 0.3094  val_loss 0.3182  val_macro_auroc 0.6851  val_macro_f1 0.1960
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 012  train_loss 0.3090  val_loss 0.3181  val_macro_auroc 0.6863  val_macro_f1 0.1975
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 013  train_loss 0.3086  val_loss 0.3179  val_macro_auroc 0.6879  val_macro_f1 0.1976
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 014  train_loss 0.3081  val_loss 0.3178  val_macro_auroc 0.6893  val_macro_f1 0.1985
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 015  train_loss 0.3078  val_loss 0.3179  val_macro_auroc 0.6903  val_macro_f1 0.1978
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 016  train_loss 0.3073  val_loss 0.3177  val_macro_auroc 0.6915  val_macro_f1 0.1991
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 017  train_loss 0.3072  val_loss 0.3179  val_macro_auroc 0.6923  val_macro_f1 0.1987
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 018  train_loss 0.3069  val_loss 0.3177  val_macro_auroc 0.6932  val_macro_f1 0.1983
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 019  train_loss 0.3066  val_loss 0.3177  val_macro_auroc 0.6938  val_macro_f1 0.2002
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 020  train_loss 0.3063  val_loss 0.3175  val_macro_auroc 0.6940  val_macro_f1 0.1982
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 021  train_loss 0.3062  val_loss 0.3175  val_macro_auroc 0.6947  val_macro_f1 0.1977
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 022  train_loss 0.3060  val_loss 0.3176  val_macro_auroc 0.6950  val_macro_f1 0.1976
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 023  train_loss 0.3057  val_loss 0.3174  val_macro_auroc 0.6958  val_macro_f1 0.2039
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 024  train_loss 0.3057  val_loss 0.3174  val_macro_auroc 0.6964  val_macro_f1 0.2020
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 025  train_loss 0.3054  val_loss 0.3176  val_macro_auroc 0.6967  val_macro_f1 0.2028
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 026  train_loss 0.3053  val_loss 0.3174  val_macro_auroc 0.6965  val_macro_f1 0.1972
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 027  train_loss 0.3052  val_loss 0.3176  val_macro_auroc 0.6966  val_macro_f1 0.1992
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 028  train_loss 0.3049  val_loss 0.3174  val_macro_auroc 0.6973  val_macro_f1 0.2011
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 029  train_loss 0.3050  val_loss 0.3173  val_macro_auroc 0.6976  val_macro_f1 0.1991
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 030  train_loss 0.3048  val_loss 0.3172  val_macro_auroc 0.6980  val_macro_f1 0.2010
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 031  train_loss 0.3047  val_loss 0.3172  val_macro_auroc 0.6982  val_macro_f1 0.1969
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 032  train_loss 0.3044  val_loss 0.3171  val_macro_auroc 0.6988  val_macro_f1 0.2008
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 033  train_loss 0.3044  val_loss 0.3172  val_macro_auroc 0.6989  val_macro_f1 0.1990
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 034  train_loss 0.3044  val_loss 0.3173  val_macro_auroc 0.6990  val_macro_f1 0.1988
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 035  train_loss 0.3042  val_loss 0.3172  val_macro_auroc 0.6993  val_macro_f1 0.2012
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 036  train_loss 0.3042  val_loss 0.3172  val_macro_auroc 0.7000  val_macro_f1 0.2006
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 037  train_loss 0.3041  val_loss 0.3171  val_macro_auroc 0.6999  val_macro_f1 0.1995
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 038  train_loss 0.3039  val_loss 0.3170  val_macro_auroc 0.6999  val_macro_f1 0.1989
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 039  train_loss 0.3038  val_loss 0.3168  val_macro_auroc 0.7004  val_macro_f1 0.2022
+./scripts/train_plus_disease.py:258: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 040  train_loss 0.3037  val_loss 0.3171  val_macro_auroc 0.7008  val_macro_f1 0.2006
+./scripts/train_plus_disease.py:132: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+{
+  "best_epoch": 40,
+  "best_val_macro_auroc": 0.7008213191116576,
+  "best_val_macro_f1_per_label": 0.2006212470146263,
+  "early_stopped": false,
+  "stopped_at_epoch": null,
+  "disease_head_params": 3598
+}
+wrote ./experiments/plus_disease_bce_001/metrics.json
+DISEASE_EXIT:0

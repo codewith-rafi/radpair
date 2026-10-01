@@ -1,0 +1,69 @@
+{
+  "device": "cuda:0",
+  "python": "python",
+  "torch": "2.10.0+cu128",
+  "cuda": true,
+  "n_test": 3189,
+  "n_test_loaded": 3189,
+  "u_policy": "ignore",
+  "dicom_preprocess": "chambon_appendix_a",
+  "peft_ckpt": "./experiments/plus_g_peft_001/checkpoint.pt",
+  "disease_ckpt": "./experiments/plus_disease_bce_001/checkpoint.pt",
+  "itm_ckpt": "./experiments/plus_itm_001/checkpoint.pt",
+  "decision_threshold": 0.5,
+  "label_keys": [
+    "Enlarged Cardiomediastinum",
+    "Cardiomegaly",
+    "Lung Opacity",
+    "Lung Lesion",
+    "Edema",
+    "Consolidation",
+    "Pneumonia",
+    "Atelectasis",
+    "Pneumothorax",
+    "Pleural Effusion",
+    "Pleural Other",
+    "Fracture",
+    "Support Devices",
+    "No Finding"
+  ],
+  "retrieval": {
+    "i2t_R@1": 0.008780181407928467,
+    "i2t_R@5": 0.03857008367776871,
+    "i2t_R@10": 0.05863906815648079,
+    "t2i_R@1": 0.010348071344196796,
+    "t2i_R@5": 0.04264659434556961,
+    "t2i_R@10": 0.07243649661540985,
+    "chance_R@1": 0.00031357792411414236
+  },
+  "retrieval_shuffle_mean": {
+    "i2t_R@1": 0.00043900907039642336,
+    "i2t_R@5": 0.0019441830459982156,
+    "i2t_R@10": 0.003386641456745565,
+    "t2i_R@1": 0.0002508623292669654,
+    "t2i_R@5": 0.0017560363165102899,
+    "t2i_R@10": 0.00326121028047055,
+    "chance_R@1": 0.00031357792411414236
+  },
+  "disease_missing_modality": {
+    "image_only": {
+      "macro_auroc": 0.7117233933366406,
+      "macro_f1_per_label": 0.20447667791029026,
+      "loss": 0.32116188868880274,
+      "n_labels_with_auroc": 14
+    },
+    "text_only": {
+      "macro_auroc": 0.8589161330352229,
+      "macro_f1_per_label": 0.4818095381570154,
+      "loss": 0.3258863377571106,
+      "n_labels_with_auroc": 14
+    }
+  },
+  "itm": {
+    "loss": 0.8250734305381775,
+    "auroc": 0.6942459385070642,
+    "accuracy": 0.6418940106616494,
+    "n_pairs": 6378
+  },
+  "note": "Held-out test: PEFT_001 + disease/ITM heads. One-shot; do not retune from these metrics."
+}

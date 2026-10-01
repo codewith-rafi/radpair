@@ -1,0 +1,234 @@
+{
+  "device": "cuda:0",
+  "python": "python",
+  "torch": "2.10.0+cu128",
+  "cuda": true,
+  "n_val": 1518,
+  "u_policy": "ignore",
+  "dicom_preprocess": "chambon_appendix_a",
+  "peft_ckpt": "./experiments/plus_g_peft_001/checkpoint.pt",
+  "disease_ckpt": "./experiments/plus_disease_bce_001/checkpoint.pt",
+  "decision_threshold": 0.5,
+  "label_keys": [
+    "Enlarged Cardiomediastinum",
+    "Cardiomegaly",
+    "Lung Opacity",
+    "Lung Lesion",
+    "Edema",
+    "Consolidation",
+    "Pneumonia",
+    "Atelectasis",
+    "Pneumothorax",
+    "Pleural Effusion",
+    "Pleural Other",
+    "Fracture",
+    "Support Devices",
+    "No Finding"
+  ],
+  "conditions": {
+    "image_baseline": {
+      "loss": 0.3171428460627794,
+      "macro_auroc": 0.7008213191116576,
+      "macro_f1_per_label": 0.2006212470146263,
+      "macro_f1_thresholded_pooled": 0.5654911838790933,
+      "n_labels_with_auroc": 14,
+      "per_label": {
+        "0": {
+          "auroc": 0.5319207946336428,
+          "n": 1417
+        },
+        "1": {
+          "auroc": 0.6501746803905604,
+          "n": 1493
+        },
+        "2": {
+          "auroc": 0.6637948637398885,
+          "n": 1514
+        },
+        "3": {
+          "auroc": 0.7299724896836314,
+          "n": 1504
+        },
+        "4": {
+          "auroc": 0.7630636837696901,
+          "n": 1417
+        },
+        "5": {
+          "auroc": 0.6110770153002968,
+          "n": 1324
+        },
+        "6": {
+          "auroc": 0.7232026616519601,
+          "n": 1369
+        },
+        "7": {
+          "auroc": 0.5925550110946746,
+          "n": 1248
+        },
+        "8": {
+          "auroc": 0.7336075498575498,
+          "n": 1504
+        },
+        "9": {
+          "auroc": 0.7827807062397546,
+          "n": 1470
+        },
+        "10": {
+          "auroc": 0.7615694164989939,
+          "n": 1506
+        },
+        "11": {
+          "auroc": 0.6505574210879785,
+          "n": 1514
+        },
+        "12": {
+          "auroc": 0.7977142417785199,
+          "n": 1517
+        },
+        "13": {
+          "auroc": 0.8195079318360654,
+          "n": 1518
+        }
+      }
+    },
+    "image_only": {
+      "loss": 0.3171428460627794,
+      "macro_auroc": 0.7008213191116576,
+      "macro_f1_per_label": 0.2006212470146263,
+      "macro_f1_thresholded_pooled": 0.5654911838790933,
+      "n_labels_with_auroc": 14,
+      "per_label": {
+        "0": {
+          "auroc": 0.5319207946336428,
+          "n": 1417
+        },
+        "1": {
+          "auroc": 0.6501746803905604,
+          "n": 1493
+        },
+        "2": {
+          "auroc": 0.6637948637398885,
+          "n": 1514
+        },
+        "3": {
+          "auroc": 0.7299724896836314,
+          "n": 1504
+        },
+        "4": {
+          "auroc": 0.7630636837696901,
+          "n": 1417
+        },
+        "5": {
+          "auroc": 0.6110770153002968,
+          "n": 1324
+        },
+        "6": {
+          "auroc": 0.7232026616519601,
+          "n": 1369
+        },
+        "7": {
+          "auroc": 0.5925550110946746,
+          "n": 1248
+        },
+        "8": {
+          "auroc": 0.7336075498575498,
+          "n": 1504
+        },
+        "9": {
+          "auroc": 0.7827807062397546,
+          "n": 1470
+        },
+        "10": {
+          "auroc": 0.7615694164989939,
+          "n": 1506
+        },
+        "11": {
+          "auroc": 0.6505574210879785,
+          "n": 1514
+        },
+        "12": {
+          "auroc": 0.7977142417785199,
+          "n": 1517
+        },
+        "13": {
+          "auroc": 0.8195079318360654,
+          "n": 1518
+        }
+      }
+    },
+    "text_only": {
+      "loss": 0.317967585598429,
+      "macro_auroc": 0.8530490321925087,
+      "macro_f1_per_label": 0.48023884710407444,
+      "macro_f1_thresholded_pooled": 0.7146401985111662,
+      "n_labels_with_auroc": 14,
+      "per_label": {
+        "0": {
+          "auroc": 0.6557662538699691,
+          "n": 1417
+        },
+        "1": {
+          "auroc": 0.8943844778030635,
+          "n": 1493
+        },
+        "2": {
+          "auroc": 0.7834131783554543,
+          "n": 1514
+        },
+        "3": {
+          "auroc": 0.8777991746905089,
+          "n": 1504
+        },
+        "4": {
+          "auroc": 0.9304227121666533,
+          "n": 1417
+        },
+        "5": {
+          "auroc": 0.7510276318794245,
+          "n": 1324
+        },
+        "6": {
+          "auroc": 0.8444235498336468,
+          "n": 1369
+        },
+        "7": {
+          "auroc": 0.8587855954142012,
+          "n": 1248
+        },
+        "8": {
+          "auroc": 0.953735754985755,
+          "n": 1504
+        },
+        "9": {
+          "auroc": 0.9425691426165159,
+          "n": 1470
+        },
+        "10": {
+          "auroc": 0.7162307176391685,
+          "n": 1506
+        },
+        "11": {
+          "auroc": 0.9018267293485561,
+          "n": 1514
+        },
+        "12": {
+          "auroc": 0.9117760667237832,
+          "n": 1517
+        },
+        "13": {
+          "auroc": 0.9205254653684204,
+          "n": 1518
+        }
+      }
+    }
+  },
+  "table": {
+    "image_baseline_macro_auroc": 0.7008213191116576,
+    "image_only_macro_auroc": 0.7008213191116576,
+    "text_only_macro_auroc": 0.8530490321925087,
+    "image_baseline_macro_f1": 0.2006212470146263,
+    "image_only_macro_f1": 0.2006212470146263,
+    "text_only_macro_f1": 0.48023884710407444
+  },
+  "note": "Missing-modality val eval: same DiseaseHead (trained on image emb). text_only feeds text emb into that head. Not sealed test."
+}

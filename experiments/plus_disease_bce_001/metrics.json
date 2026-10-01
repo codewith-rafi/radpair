@@ -1,0 +1,426 @@
+{
+  "device": "cuda:0",
+  "python": "python",
+  "torch": "2.10.0+cu128",
+  "cuda": true,
+  "n_train": 10293,
+  "n_val": 1518,
+  "u_policy": "ignore",
+  "dicom_preprocess": "chambon_appendix_a",
+  "init_ckpt": "./experiments/plus_g_peft_001/checkpoint.pt",
+  "disease_head_params": 3598,
+  "label_keys": [
+    "Enlarged Cardiomediastinum",
+    "Cardiomegaly",
+    "Lung Opacity",
+    "Lung Lesion",
+    "Edema",
+    "Consolidation",
+    "Pneumonia",
+    "Atelectasis",
+    "Pneumothorax",
+    "Pleural Effusion",
+    "Pleural Other",
+    "Fracture",
+    "Support Devices",
+    "No Finding"
+  ],
+  "decision_threshold": 0.5,
+  "untrained_val": {
+    "loss": 0.6976502388715744,
+    "macro_auroc": 0.47746186148042774,
+    "macro_f1_per_label": 0.16761796165451745,
+    "n_labels_with_auroc": 14
+  },
+  "best_epoch": 40,
+  "best_val": {
+    "loss": 0.3171428460627794,
+    "macro_auroc": 0.7008213191116576,
+    "macro_f1_per_label": 0.2006212470146263,
+    "macro_f1_thresholded_pooled": 0.5654911838790933,
+    "n_labels_with_auroc": 14,
+    "per_label": {
+      "Enlarged Cardiomediastinum": {
+        "auroc": 0.5319207946336428,
+        "n": 1417
+      },
+      "Cardiomegaly": {
+        "auroc": 0.6501746803905604,
+        "n": 1493
+      },
+      "Lung Opacity": {
+        "auroc": 0.6637948637398885,
+        "n": 1514
+      },
+      "Lung Lesion": {
+        "auroc": 0.7299724896836314,
+        "n": 1504
+      },
+      "Edema": {
+        "auroc": 0.7630636837696901,
+        "n": 1417
+      },
+      "Consolidation": {
+        "auroc": 0.6110770153002968,
+        "n": 1324
+      },
+      "Pneumonia": {
+        "auroc": 0.7232026616519601,
+        "n": 1369
+      },
+      "Atelectasis": {
+        "auroc": 0.5925550110946746,
+        "n": 1248
+      },
+      "Pneumothorax": {
+        "auroc": 0.7336075498575498,
+        "n": 1504
+      },
+      "Pleural Effusion": {
+        "auroc": 0.7827807062397546,
+        "n": 1470
+      },
+      "Pleural Other": {
+        "auroc": 0.7615694164989939,
+        "n": 1506
+      },
+      "Fracture": {
+        "auroc": 0.6505574210879785,
+        "n": 1514
+      },
+      "Support Devices": {
+        "auroc": 0.7977142417785199,
+        "n": 1517
+      },
+      "No Finding": {
+        "auroc": 0.8195079318360654,
+        "n": 1518
+      }
+    }
+  },
+  "early_stopped": false,
+  "stopped_at_epoch": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.4872108082347941,
+      "val_loss": 0.38524581243594486,
+      "val_macro_auroc": 0.6073769097678555,
+      "val_macro_f1_per_label": 0.16735107900410093,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.35559665915379274,
+      "val_loss": 0.3405529980858167,
+      "val_macro_auroc": 0.628453739642971,
+      "val_macro_f1_per_label": 0.17616240523219623,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.33080686150681565,
+      "val_loss": 0.32849882915616035,
+      "val_macro_auroc": 0.6428196115768365,
+      "val_macro_f1_per_label": 0.1782924114276869,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.32207496199652413,
+      "val_loss": 0.32370298479994136,
+      "val_macro_auroc": 0.6538256530435086,
+      "val_macro_f1_per_label": 0.18067499828543826,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.31770082426219715,
+      "val_loss": 0.32130950689315796,
+      "val_macro_auroc": 0.6616227251036867,
+      "val_macro_f1_per_label": 0.1823972507484399,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.315159658219584,
+      "val_loss": 0.31994697637856007,
+      "val_macro_auroc": 0.6678795367255901,
+      "val_macro_f1_per_label": 0.18588523463476445,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.3132166732044606,
+      "val_loss": 0.3195926391830047,
+      "val_macro_auroc": 0.6734380667426169,
+      "val_macro_f1_per_label": 0.18830813141582756,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.3119041974949317,
+      "val_loss": 0.31904509539405507,
+      "val_macro_auroc": 0.6772949484569785,
+      "val_macro_f1_per_label": 0.19037017522137564,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.31096094758525444,
+      "val_loss": 0.31865220703184605,
+      "val_macro_auroc": 0.6801008488140224,
+      "val_macro_f1_per_label": 0.19070427939246662,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.31018531090373935,
+      "val_loss": 0.31827229385574657,
+      "val_macro_auroc": 0.6827766760887533,
+      "val_macro_f1_per_label": 0.19404852132778785,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.3094188619718373,
+      "val_loss": 0.3181695577998956,
+      "val_macro_auroc": 0.68509945196796,
+      "val_macro_f1_per_label": 0.19603573262781687,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.30895303440428223,
+      "val_loss": 0.3181366802503665,
+      "val_macro_auroc": 0.686296100677992,
+      "val_macro_f1_per_label": 0.19750508676366677,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.3085502108030973,
+      "val_loss": 0.31786414111653966,
+      "val_macro_auroc": 0.6878641451239895,
+      "val_macro_f1_per_label": 0.19759659619977862,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.3081031107921095,
+      "val_loss": 0.3178111823896567,
+      "val_macro_auroc": 0.6892700973065123,
+      "val_macro_f1_per_label": 0.19850767655702106,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.3078002202269444,
+      "val_loss": 0.3178544243176778,
+      "val_macro_auroc": 0.6902664435116849,
+      "val_macro_f1_per_label": 0.19775262080104725,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.30733538439897734,
+      "val_loss": 0.3177259974181652,
+      "val_macro_auroc": 0.6914930983827458,
+      "val_macro_f1_per_label": 0.1991119651778974,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.3071585655490929,
+      "val_loss": 0.31788927378753823,
+      "val_macro_auroc": 0.6923320952831339,
+      "val_macro_f1_per_label": 0.19866994071284558,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.30688903158141817,
+      "val_loss": 0.31773544785877067,
+      "val_macro_auroc": 0.6931676771461529,
+      "val_macro_f1_per_label": 0.19831077895700003,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.3065845322478969,
+      "val_loss": 0.3177141323685646,
+      "val_macro_auroc": 0.6938050862264725,
+      "val_macro_f1_per_label": 0.2001728655196379,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.3063245655684456,
+      "val_loss": 0.31753347006936866,
+      "val_macro_auroc": 0.6939597720416256,
+      "val_macro_f1_per_label": 0.19823885240518216,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.3061942476721196,
+      "val_loss": 0.3175429757684469,
+      "val_macro_auroc": 0.6946524001818594,
+      "val_macro_f1_per_label": 0.19773403334241832,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 22,
+      "train_loss": 0.305958881045799,
+      "val_loss": 0.31763431057333946,
+      "val_macro_auroc": 0.6949773671913217,
+      "val_macro_f1_per_label": 0.19761846729264837,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 23,
+      "train_loss": 0.3057085684155378,
+      "val_loss": 0.3173709933956464,
+      "val_macro_auroc": 0.6957591050938391,
+      "val_macro_f1_per_label": 0.2039200641174909,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 24,
+      "train_loss": 0.30568020556388986,
+      "val_loss": 0.31739384432633716,
+      "val_macro_auroc": 0.696420039058214,
+      "val_macro_f1_per_label": 0.2019575054224887,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 25,
+      "train_loss": 0.3054497445762343,
+      "val_loss": 0.3175617555777232,
+      "val_macro_auroc": 0.6966618038860728,
+      "val_macro_f1_per_label": 0.202808564448581,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 26,
+      "train_loss": 0.3053494266631819,
+      "val_loss": 0.31739652901887894,
+      "val_macro_auroc": 0.6964536697553362,
+      "val_macro_f1_per_label": 0.19719224656777892,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 27,
+      "train_loss": 0.30517884011951935,
+      "val_loss": 0.3175684306770563,
+      "val_macro_auroc": 0.6965875785437375,
+      "val_macro_f1_per_label": 0.1991823874605918,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 28,
+      "train_loss": 0.30490386787790374,
+      "val_loss": 0.3173545381675164,
+      "val_macro_auroc": 0.6972923639093622,
+      "val_macro_f1_per_label": 0.20106001817979405,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 29,
+      "train_loss": 0.30497161593764,
+      "val_loss": 0.31730312916139763,
+      "val_macro_auroc": 0.6976384405814663,
+      "val_macro_f1_per_label": 0.1990604483650033,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 30,
+      "train_loss": 0.30483433553177247,
+      "val_loss": 0.3171776918073495,
+      "val_macro_auroc": 0.6980232178201403,
+      "val_macro_f1_per_label": 0.20095672097813846,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 31,
+      "train_loss": 0.3046654117441623,
+      "val_loss": 0.3171687995394071,
+      "val_macro_auroc": 0.6982281718590011,
+      "val_macro_f1_per_label": 0.1969135462607265,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 32,
+      "train_loss": 0.30443714359467644,
+      "val_loss": 0.3171468445410331,
+      "val_macro_auroc": 0.6987939695958248,
+      "val_macro_f1_per_label": 0.2007621637647193,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 33,
+      "train_loss": 0.3043866928585593,
+      "val_loss": 0.317248006661733,
+      "val_macro_auroc": 0.698854266194257,
+      "val_macro_f1_per_label": 0.19902116050046148,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 34,
+      "train_loss": 0.3043560108570295,
+      "val_loss": 0.31725554416577023,
+      "val_macro_auroc": 0.6990325049422249,
+      "val_macro_f1_per_label": 0.19878344879447002,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 35,
+      "train_loss": 0.30417778275651725,
+      "val_loss": 0.31715207857390243,
+      "val_macro_auroc": 0.6993305921725765,
+      "val_macro_f1_per_label": 0.2012135693511617,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 36,
+      "train_loss": 0.30421046550585845,
+      "val_loss": 0.31716469799478847,
+      "val_macro_auroc": 0.6999805927003321,
+      "val_macro_f1_per_label": 0.20055377221696308,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 37,
+      "train_loss": 0.30412151634321777,
+      "val_loss": 0.31707849601904553,
+      "val_macro_auroc": 0.6998921400537299,
+      "val_macro_f1_per_label": 0.19950415048780873,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 38,
+      "train_loss": 0.3039057721322942,
+      "val_loss": 0.31701546038190526,
+      "val_macro_auroc": 0.6999011394284612,
+      "val_macro_f1_per_label": 0.19890597906672053,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 39,
+      "train_loss": 0.3037750712157781,
+      "val_loss": 0.3168424268563588,
+      "val_macro_auroc": 0.7003875851649769,
+      "val_macro_f1_per_label": 0.20221074000601386,
+      "val_n_labels_with_auroc": 14
+    },
+    {
+      "epoch": 40,
+      "train_loss": 0.3037250163584855,
+      "val_loss": 0.3171428460627794,
+      "val_macro_auroc": 0.7008213191116576,
+      "val_macro_f1_per_label": 0.2006212470146263,
+      "val_n_labels_with_auroc": 14
+    }
+  ],
+  "note": "Plus disease BCE u_ignore on frozen PEFT_001 image emb."
+}

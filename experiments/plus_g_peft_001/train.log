@@ -1,0 +1,57 @@
+device=cuda:0 amp=True n_train=10293 n_val=1518 cache=chexpert_plus_subset/images_chambon python=python
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 1999.00it/s]
+[transformers] [1mBertModel LOAD REPORT[0m from: ./models/Bio_ClinicalBERT
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+lora_rank=8 alpha=16 n_proj=721408 n_lora=294912 n_trainable=1016320
+./scripts/train_plus_g_peft.py:220: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler(enabled=use_amp)
+embedding untrained val…
+./scripts/train_plus_g_peft.py:64: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+untrained_val {'i2t_R@1': 0.000659, 'i2t_R@5': 0.002635, 'i2t_R@10': 0.00527, 't2i_R@1': 0.0, 't2i_R@5': 0.001976, 't2i_R@10': 0.006588, 'chance_R@1': 0.000659}
+./scripts/train_plus_g_peft.py:250: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=use_amp):
+epoch 001  loss 3.1000  train512_i2t_R@1 0.0215  val_i2t_R@1 0.0066  val_t2i_R@1 0.0066
+epoch 002  loss 2.7298  train512_i2t_R@1 0.0371  val_i2t_R@1 0.0079  val_t2i_R@1 0.0086
+epoch 003  loss 2.5070  train512_i2t_R@1 0.0508  val_i2t_R@1 0.0132  val_t2i_R@1 0.0105
+epoch 004  loss 2.3654  train512_i2t_R@1 0.0605  val_i2t_R@1 0.0119  val_t2i_R@1 0.0138
+epoch 005  loss 2.2425  train512_i2t_R@1 0.0703  val_i2t_R@1 0.0119  val_t2i_R@1 0.0132
+epoch 006  loss 2.1118  train512_i2t_R@1 0.0879  val_i2t_R@1 0.0125  val_t2i_R@1 0.0132
+epoch 007  loss 2.0262  train512_i2t_R@1 0.0938  val_i2t_R@1 0.0158  val_t2i_R@1 0.0184
+epoch 008  loss 1.9339  train512_i2t_R@1 0.1035  val_i2t_R@1 0.0138  val_t2i_R@1 0.0184
+epoch 009  loss 1.8514  train512_i2t_R@1 0.1387  val_i2t_R@1 0.0158  val_t2i_R@1 0.0165
+epoch 010  loss 1.7461  train512_i2t_R@1 0.1484  val_i2t_R@1 0.0138  val_t2i_R@1 0.0198
+epoch 011  loss 1.6880  train512_i2t_R@1 0.1738  val_i2t_R@1 0.0191  val_t2i_R@1 0.0191
+epoch 012  loss 1.6227  train512_i2t_R@1 0.1719  val_i2t_R@1 0.0184  val_t2i_R@1 0.0165
+epoch 013  loss 1.5514  train512_i2t_R@1 0.1953  val_i2t_R@1 0.0184  val_t2i_R@1 0.0204
+epoch 014  loss 1.4963  train512_i2t_R@1 0.1992  val_i2t_R@1 0.0171  val_t2i_R@1 0.0211
+epoch 015  loss 1.4165  train512_i2t_R@1 0.2227  val_i2t_R@1 0.0178  val_t2i_R@1 0.0138
+epoch 016  loss 1.3741  train512_i2t_R@1 0.2207  val_i2t_R@1 0.0171  val_t2i_R@1 0.0184
+epoch 017  loss 1.3220  train512_i2t_R@1 0.2461  val_i2t_R@1 0.0165  val_t2i_R@1 0.0138
+epoch 018  loss 1.2750  train512_i2t_R@1 0.2773  val_i2t_R@1 0.0165  val_t2i_R@1 0.0191
+epoch 019  loss 1.2175  train512_i2t_R@1 0.2441  val_i2t_R@1 0.0152  val_t2i_R@1 0.0184
+{
+  "best_epoch": 11,
+  "best_val_i2t_R@1": 0.019104083999991417,
+  "best_val_t2i_R@1": 0.019104083999991417,
+  "shuffle_mean_i2t_R@1": 0.0007905138423666358,
+  "beats_5x_chance": true,
+  "early_stopped": true,
+  "stopped_at_epoch": 19,
+  "trainable_params": 1016320
+}
+wrote ./experiments/plus_g_peft_001/metrics.json

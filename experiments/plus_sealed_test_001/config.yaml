@@ -1,0 +1,43 @@
+# Held-out Plus test.
+# Uses PEFT_001 + disease + ITM heads. Requires Chambon JPG cache for test paths.
+# Always run in tmux after test JPG cache is complete:
+#   tmux new -s plus_test
+#   activate your conda/venv
+#   cd $RADPAIR_ROOT
+#   export CUDA_VISIBLE_DEVICES=1
+#   python scripts/eval_plus_sealed_test.py --config configs/plus_sealed_test.yaml
+
+seed: 42
+test_manifest: data/processed/plus_test_manifest.csv
+text_encoder: models/Bio_ClinicalBERT
+image_cache_root: chexpert_plus_subset/images_chambon
+dicom_preprocess: chambon_appendix_a
+u_policy: ignore
+
+peft_ckpt: experiments/plus_g_peft_001/checkpoint.pt
+disease_ckpt: experiments/plus_disease_bce_001/checkpoint.pt
+itm_ckpt: experiments/plus_itm_001/checkpoint.pt
+
+max_text_length: 256
+embed_dim: 256
+n_labels: 14
+freeze_encoder: true
+freeze_image: true
+freeze_text: true
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.1
+lora_modules:
+  - query
+  - value
+
+batch_size: 32
+num_workers: 8
+amp: true
+decision_threshold: 0.5
+n_shuffle: 5
+
+expected_n_test: 3189
+n_test_loaded: 3189
+
+experiment_dir: experiments/plus_sealed_test_001
