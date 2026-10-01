@@ -1,0 +1,33 @@
+# Git ignore — public-safe export
+
+# weights / media / PHI
+*.pt
+*.pth
+*.ckpt
+*.dcm
+*.jpg
+*.jpeg
+*.png
+data/processed/*.csv
+chexpert_plus_subset/images_chambon/
+chexpert_plus_subset/manifest.csv
+chexpert_plus_subset/pairs_with_text_labels.csv
+chexpert_plus_subset/*_SHA256.txt
+
+# HF / local model bins
+models/Bio_ClinicalBERT/**
+!models/Bio_ClinicalBERT/README.md
+
+# python / env
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.egg-info/
+.pytest_cache/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+.cursor/

@@ -1,0 +1,20 @@
+# Core deps frozen from the lab training environment (2026-10-01).
+# Torch lines are CUDA 12.8 wheels; on other platforms install matching torch/vision first:
+#   https://pytorch.org/get-started/locally/
+
+torch==2.10.0+cu128
+torchvision==0.25.0+cu128
+transformers==5.17.0
+peft==0.21.0
+tokenizers==0.23.2
+accelerate==1.15.0
+safetensors==0.8.0
+numpy==2.4.6
+scipy==1.17.1
+scikit-learn==1.9.1
+pandas==3.0.5
+Pillow==12.3.0
+opencv-python-headless==5.0.0.93
+pydicom==3.0.2
+PyYAML==6.0.3
+tqdm==4.70.1
