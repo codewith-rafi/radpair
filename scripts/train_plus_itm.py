@@ -1,0 +1,417 @@
+"""Plus ITM: binary match/non-match on frozen PEFT dual encoder.
+
+ITM MLP on concatenated image/text embeddings. Negatives = in-batch text shuffle.
+Early-stop on val ITM AUROC with min_delta (avoids hairline-creep patience reset).
+ CUDA_VISIBLE_DEVICES=1; tmux; write under RADPAIR_ROOT (repo root).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import random
+import shutil
+import sys
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+import yaml
+from sklearn.metrics import accuracy_score, roc_auc_score
+from torch.utils.data import DataLoader
+from transformers import AutoTokenizer
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from src.paths import (
+    assert_under_repo,
+    chexpert_plus_root,
+    default_chexbert_impression,
+    default_plus_csv,
+    repo_root,
+    resolve_repo_path,
+)
+
+from src.data.dataset import CheXpertPlusPairDataset, load_plus_pair_rows
+from src.models.dual_encoder import DualEncoder
+from src.models.itm_head import ITMHead
+
+
+def resolve_path(base: Path, maybe: str) -> Path:
+    p = Path(maybe)
+    return p if p.is_absolute() else (base / p).resolve()
+
+
+def set_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+def collate(batch: list[dict]) -> dict:
+    return {
+        "pixel_values": torch.stack([b["pixel_values"] for b in batch]),
+        "input_ids": torch.stack([b["input_ids"] for b in batch]),
+        "attention_mask": torch.stack([b["attention_mask"] for b in batch]),
+        "patient_id": [b["patient_id"] for b in batch],
+    }
+
+
+def make_loader(dataset, batch_size: int, num_workers: int, shuffle: bool, seed: int) -> DataLoader:
+    kwargs: dict = {
+        "batch_size": batch_size,
+        "shuffle": shuffle,
+        "num_workers": num_workers,
+        "collate_fn": collate,
+        "drop_last": shuffle,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    if num_workers > 0:
+        kwargs["persistent_workers"] = True
+        kwargs["prefetch_factor"] = 2
+    if shuffle:
+        g = torch.Generator()
+        g.manual_seed(seed)
+        kwargs["generator"] = g
+    return DataLoader(dataset, **kwargs)
+
+
+def write_json(path: Path, payload: dict) -> None:
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def load_peft_encoder(cfg: dict, text_encoder: str, device: torch.device, ckpt_path: Path) -> DualEncoder:
+    model = DualEncoder(
+        text_encoder_name=text_encoder,
+        embed_dim=int(cfg["embed_dim"]),
+        freeze_image=bool(cfg["freeze_image"]),
+        freeze_text=bool(cfg["freeze_text"]),
+        tau=0.07,
+        learnable_tau=False,
+    )
+    model.enable_text_lora(
+        r=int(cfg["lora_rank"]),
+        alpha=int(cfg["lora_alpha"]),
+        dropout=float(cfg.get("lora_dropout", 0.1)),
+        target_modules=list(cfg.get("lora_modules", ["query", "value"])),
+    )
+    try:
+        blob = torch.load(ckpt_path, map_location=device, weights_only=False)
+    except TypeError:
+        blob = torch.load(ckpt_path, map_location=device)
+    if not isinstance(blob, dict) or "model" not in blob:
+        raise SystemExit(f"unexpected checkpoint format: {ckpt_path}")
+    missing, unexpected = model.load_state_dict(blob["model"], strict=False)
+    if unexpected:
+        raise SystemExit(f"unexpected keys loading PEFT ckpt: {unexpected[:8]}")
+    if missing:
+        print(f"warn missing keys: {missing[:8]}", flush=True)
+    if bool(cfg.get("freeze_encoder", True)):
+        for p in model.parameters():
+            p.requires_grad = False
+    model = model.to(device)
+    model.eval()
+    return model
+
+
+def _autocast(device: torch.device, enabled: bool):
+    if device.type == "cuda":
+        return torch.amp.autocast("cuda", enabled=enabled)
+    return torch.amp.autocast("cpu", enabled=False)
+
+
+def itm_pair_logits(
+    head: ITMHead,
+    image_emb: torch.Tensor,
+    text_emb: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Return (logits_2B, labels_2B) for match + in-batch rolled non-match."""
+    b = image_emb.size(0)
+    if b < 2:
+        raise RuntimeError("ITM batch size must be >= 2 for in-batch negatives")
+    pos_logits = head(image_emb, text_emb)
+    neg_text = torch.roll(text_emb, shifts=1, dims=0)
+    neg_logits = head(image_emb, neg_text)
+    logits = torch.cat([pos_logits, neg_logits], dim=0)
+    labels = torch.cat(
+        [
+            torch.ones(b, device=logits.device, dtype=torch.float32),
+            torch.zeros(b, device=logits.device, dtype=torch.float32),
+        ],
+        dim=0,
+    )
+    return logits, labels
+
+
+@torch.no_grad()
+def eval_itm(
+    encoder: DualEncoder,
+    head: ITMHead,
+    loader: DataLoader,
+    device: torch.device,
+    use_amp: bool,
+    threshold: float,
+) -> dict:
+    encoder.eval()
+    head.eval()
+    all_probs: list[np.ndarray] = []
+    all_labels: list[np.ndarray] = []
+    total_loss = 0.0
+    n_batches = 0
+    for batch in loader:
+        pixels = batch["pixel_values"].to(device, non_blocking=True)
+        ids = batch["input_ids"].to(device, non_blocking=True)
+        mask = batch["attention_mask"].to(device, non_blocking=True)
+        with _autocast(device, use_amp):
+            img = encoder.encode_image(pixels)
+            txt = encoder.encode_text(ids, mask)
+            logits, labels = itm_pair_logits(head, img.float(), txt.float())
+            loss = F.binary_cross_entropy_with_logits(logits, labels)
+        total_loss += float(loss.item())
+        n_batches += 1
+        probs = torch.sigmoid(logits.float()).cpu().numpy()
+        all_probs.append(probs)
+        all_labels.append(labels.cpu().numpy())
+    y = np.concatenate(all_labels)
+    p = np.concatenate(all_probs)
+    auroc = float(roc_auc_score(y, p)) if len(np.unique(y)) > 1 else float("nan")
+    acc = float(accuracy_score(y, (p >= threshold).astype(np.float32)))
+    return {
+        "loss": total_loss / max(n_batches, 1),
+        "auroc": auroc,
+        "accuracy": acc,
+        "n_pairs": int(len(y)),
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path, default=ROOT / "configs" / "plus_itm.yaml")
+    args = parser.parse_args()
+
+    cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    set_seed(int(cfg["seed"]))
+
+    train_manifest = resolve_path(ROOT, str(cfg["train_manifest"]))
+    val_manifest = resolve_path(ROOT, str(cfg["val_manifest"]))
+    train_rows = load_plus_pair_rows(train_manifest, allowed_splits={"train"})
+    val_rows = load_plus_pair_rows(val_manifest, allowed_splits={"val"})
+    n_tr_exp = int(cfg.get("expected_n_train", 0) or 0)
+    n_va_exp = int(cfg.get("expected_n_val", 0) or 0)
+    if n_tr_exp and len(train_rows) != n_tr_exp:
+        raise SystemExit(f"train has {len(train_rows)} rows, expected {n_tr_exp}")
+    if n_va_exp and len(val_rows) != n_va_exp:
+        raise SystemExit(f"val has {len(val_rows)} rows, expected {n_va_exp}")
+
+    cache_root = resolve_path(ROOT, str(cfg["image_cache_root"]))
+    assert_under_repo(cache_root, "image_cache_root")
+    ckpt_path = resolve_path(ROOT, str(cfg["init_ckpt"]))
+    if not ckpt_path.is_file():
+        raise SystemExit(f"init_ckpt missing: {ckpt_path}")
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    use_amp = bool(cfg.get("amp", True)) and device.type == "cuda"
+    print(
+        f"device={device} amp={use_amp} n_train={len(train_rows)} n_val={len(val_rows)} "
+        f"cache={cache_root} ckpt={ckpt_path} python={sys.executable}",
+        flush=True,
+    )
+
+    text_encoder = str(resolve_path(ROOT, str(cfg["text_encoder"])))
+    tok_kw = {}
+    if Path(text_encoder).is_dir():
+        tok_kw["local_files_only"] = True
+        os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    tokenizer = AutoTokenizer.from_pretrained(text_encoder, **tok_kw)
+
+    max_len = int(cfg["max_text_length"])
+    train_ds = CheXpertPlusPairDataset(
+        train_rows, tokenizer, max_len, image_cache_root=cache_root, require_cache=True
+    )
+    val_ds = CheXpertPlusPairDataset(
+        val_rows, tokenizer, max_len, image_cache_root=cache_root, require_cache=True
+    )
+    bs = int(cfg["batch_size"])
+    if bs < 2:
+        raise SystemExit("batch_size must be >= 2 for in-batch ITM negatives")
+    nw = int(cfg["num_workers"])
+    seed = int(cfg["seed"])
+    train_loader = make_loader(train_ds, bs, nw, True, seed)
+    val_loader = make_loader(val_ds, bs, nw, False, seed)
+
+    encoder = load_peft_encoder(cfg, text_encoder, device, ckpt_path)
+    head = ITMHead(
+        embed_dim=int(cfg["embed_dim"]),
+        hidden_dim=int(cfg.get("itm_hidden_dim", 128)),
+    ).to(device)
+    n_head = sum(p.numel() for p in head.parameters())
+    print(
+        f"itm_head_params={n_head} encoder_frozen={cfg.get('freeze_encoder', True)} "
+        f"min_delta={cfg.get('early_stop_min_delta', 0.001)}",
+        flush=True,
+    )
+
+    opt = torch.optim.AdamW(
+        head.parameters(),
+        lr=float(cfg["lr"]),
+        weight_decay=float(cfg["weight_decay"]),
+    )
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
+    thr = float(cfg.get("decision_threshold", 0.5))
+    min_delta = float(cfg.get("early_stop_min_delta", 0.001))
+    patience = int(cfg["early_stop_patience"])
+
+    exp = resolve_path(ROOT, str(cfg["experiment_dir"]))
+    assert_under_repo(exp, "experiment_dir")
+    exp.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(args.config, exp / "config.yaml")
+    ckpt_out = exp / "checkpoint.pt"
+    metrics_path = exp / "metrics.json"
+
+    print("eval untrained ITM head…", flush=True)
+    untrained = eval_itm(encoder, head, val_loader, device, use_amp, thr)
+    print(
+        f"untrained_val loss={untrained['loss']:.4f} "
+        f"auroc={untrained['auroc']} accuracy={untrained['accuracy']}",
+        flush=True,
+    )
+
+    history = []
+    best_auroc = -1.0
+    best_epoch = 0
+    stale = 0
+    stopped_at = None
+
+    for epoch in range(1, int(cfg["max_epochs"]) + 1):
+        encoder.eval()
+        head.train()
+        epoch_loss = 0.0
+        n_batches = 0
+        for batch in train_loader:
+            opt.zero_grad(set_to_none=True)
+            pixels = batch["pixel_values"].to(device, non_blocking=True)
+            ids = batch["input_ids"].to(device, non_blocking=True)
+            mask = batch["attention_mask"].to(device, non_blocking=True)
+            with _autocast(device, use_amp):
+                with torch.no_grad():
+                    img = encoder.encode_image(pixels)
+                    txt = encoder.encode_text(ids, mask)
+                logits, labels = itm_pair_logits(head, img.detach().float(), txt.detach().float())
+                loss = F.binary_cross_entropy_with_logits(logits, labels)
+            if not torch.isfinite(loss):
+                raise SystemExit(f"non-finite loss at epoch {epoch}: {loss.item()}")
+            scaler.scale(loss).backward()
+            scaler.step(opt)
+            scaler.update()
+            epoch_loss += float(loss.item())
+            n_batches += 1
+        mean_loss = epoch_loss / max(n_batches, 1)
+
+        val_m = eval_itm(encoder, head, val_loader, device, use_amp, thr)
+        row = {
+            "epoch": epoch,
+            "train_loss": mean_loss,
+            "val_loss": val_m["loss"],
+            "val_itm_auroc": val_m["auroc"],
+            "val_itm_accuracy": val_m["accuracy"],
+        }
+        history.append(row)
+        print(
+            f"epoch {epoch:03d}  train_loss {mean_loss:.4f}  val_loss {val_m['loss']:.4f}  "
+            f"val_itm_auroc {val_m['auroc']:.4f}  val_itm_acc {val_m['accuracy']:.4f}",
+            flush=True,
+        )
+
+        score = float(val_m["auroc"]) if np.isfinite(val_m["auroc"]) else -1.0
+        if score > best_auroc + min_delta:
+            best_auroc = score
+            best_epoch = epoch
+            stale = 0
+            torch.save(
+                {
+                    "itm_head": head.state_dict(),
+                    "init_ckpt": str(ckpt_path),
+                    "cfg": cfg,
+                    "epoch": epoch,
+                    "val_itm_auroc": score,
+                },
+                ckpt_out,
+            )
+        else:
+            stale += 1
+
+        payload = {
+            "device": str(device),
+            "python": sys.executable,
+            "torch": torch.__version__,
+            "n_train": len(train_rows),
+            "n_val": len(val_rows),
+            "init_ckpt": str(ckpt_path),
+            "itm_head_params": n_head,
+            "early_stop_min_delta": min_delta,
+            "untrained_val": untrained,
+            "best_epoch": best_epoch,
+            "best_val_itm_auroc": best_auroc,
+            "history": history,
+            "early_stopped": False,
+            "note": (
+                "ITM BCE match vs in-batch text roll on frozen PEFT embeds. "
+                "No test. min_delta early-stop on val ITM AUROC."
+            ),
+        }
+        write_json(metrics_path, payload)
+
+        if stale >= patience:
+            stopped_at = epoch
+            break
+
+    try:
+        blob = torch.load(ckpt_out, map_location=device, weights_only=False)
+    except TypeError:
+        blob = torch.load(ckpt_out, map_location=device)
+    head.load_state_dict(blob["itm_head"])
+    best_val = eval_itm(encoder, head, val_loader, device, use_amp, thr)
+
+    payload = {
+        "device": str(device),
+        "python": sys.executable,
+        "torch": torch.__version__,
+        "cuda": torch.cuda.is_available(),
+        "n_train": len(train_rows),
+        "n_val": len(val_rows),
+        "dicom_preprocess": cfg.get("dicom_preprocess", "chambon_appendix_a"),
+        "init_ckpt": str(ckpt_path),
+        "itm_head_params": n_head,
+        "itm_negatives": "in_batch_shuffle_roll1",
+        "early_stop_min_delta": min_delta,
+        "decision_threshold": thr,
+        "untrained_val": untrained,
+        "best_epoch": best_epoch,
+        "best_val": best_val,
+        "early_stopped": stopped_at is not None,
+        "stopped_at_epoch": stopped_at,
+        "history": history,
+        "note": "Plus ITM on frozen PEFT_001 image/text embeddings.",
+    }
+    write_json(metrics_path, payload)
+    summary = {
+        "best_epoch": best_epoch,
+        "best_val_itm_auroc": best_val["auroc"],
+        "best_val_itm_accuracy": best_val["accuracy"],
+        "early_stopped": stopped_at is not None,
+        "stopped_at_epoch": stopped_at,
+        "itm_head_params": n_head,
+    }
+    print(json.dumps(summary, indent=2))
+    print(f"wrote {metrics_path}")
+    print("ITM_EXIT:0", flush=True)
+
+
+if __name__ == "__main__":
+    main()
