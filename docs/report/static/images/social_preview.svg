@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="RadPair: cross-modal alignment for chest X-ray and clinical text">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1120"/>
+      <stop offset="55%" stop-color="#14204a"/>
+      <stop offset="100%" stop-color="#0f2a3d"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <style>
+      .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="630" fill="url(#bg)"/>
+
+  <circle cx="1050" cy="120" r="220" fill="#22d3ee" opacity="0.08"/>
+  <circle cx="140" cy="560" r="260" fill="#6366f1" opacity="0.10"/>
+
+  <rect x="72" y="72" width="6" height="120" fill="url(#accent)" rx="3"/>
+
+  <text class="t" x="108" y="140" font-size="86" font-weight="800" fill="#ffffff">RadPair</text>
+  <text class="t" x="108" y="186" font-size="27" font-weight="500" fill="#93c5fd">Cross-modal alignment for chest X-ray and clinical text</text>
+
+  <text class="t" x="108" y="248" font-size="25" font-weight="400" fill="#cbd5e1">ResNet-50 + BioClinicalBERT dual encoder, symmetric InfoNCE,</text>
+  <text class="t" x="108" y="284" font-size="25" font-weight="400" fill="#cbd5e1">shared 256-D embeddings, evaluated on a 15,000-pair CheXpert Plus subset.</text>
+
+  <g font-family="Inter, Segoe UI, system-ui, sans-serif">
+    <rect x="108" y="344" width="296" height="128" rx="14" fill="#ffffff" opacity="0.07"/>
+    <text x="136" y="386" font-size="20" fill="#94a3b8">Test i&#8594;t R&#64;1</text>
+    <text x="136" y="440" font-size="46" font-weight="800" fill="#ffffff">0.0088</text>
+    <text x="136" y="464" font-size="16" fill="#64748b">&#8776;28&#215; chance, 3,189 pairs</text>
+
+    <rect x="428" y="344" width="296" height="128" rx="14" fill="#ffffff" opacity="0.07"/>
+    <text x="456" y="386" font-size="20" fill="#94a3b8">Disease macro-AUROC</text>
+    <text x="456" y="440" font-size="46" font-weight="800" fill="#ffffff">0.8589</text>
+    <text x="456" y="464" font-size="16" fill="#64748b">14 labels, U-Ignore mask</text>
+
+    <rect x="748" y="344" width="296" height="128" rx="14" fill="#ffffff" opacity="0.07"/>
+    <text x="776" y="386" font-size="20" fill="#94a3b8">Embedding dimension</text>
+    <text x="776" y="440" font-size="46" font-weight="800" fill="#ffffff">256</text>
+    <text x="776" y="464" font-size="16" fill="#64748b">L2-normalized, shared space</text>
+  </g>
+
+  <line x1="108" y1="528" x2="1092" y2="528" stroke="#ffffff" opacity="0.14"/>
+
+  <text class="t" x="108" y="570" font-size="22" font-weight="600" fill="#e2e8f0">Rafi Ahmed &#183; Machine Intelligence Lab, Sichuan University</text>
+  <text class="t" x="1092" y="570" font-size="22" text-anchor="end" fill="#7dd3fc">codewith-rafi.github.io/radpair</text>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-labelledby="dis-title dis-desc">
+  <title id="dis-title">Disease classification and image-text matching on the sealed test</title>
+  <desc id="dis-desc">Grouped bar chart. The 14-label disease head reaches macro-AUROC 0.7117 and macro-F1 0.2045 from image embeddings alone, and macro-AUROC 0.8589 with macro-F1 0.4818 from text embeddings alone. The image-text matching head reaches AUROC 0.6942 and accuracy 0.6419 over 6,378 pairs. Text-only performance is higher because the 14 labels are derived from report text.</desc>
+
+  <style>
+    .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+    .lab { font-size: 13.5px; font-weight: 600; fill: #1f2937; }
+    .sub { font-size: 11.5px; fill: #4b5563; }
+    .num { font-size: 12px; font-weight: 700; fill: #111827; }
+    .axis { stroke: #9ca3af; stroke-width: 1.2; }
+    .grid { stroke: #e5e7eb; stroke-width: 1; }
+    .a1 { fill: #7c3aed; }
+    .a2 { fill: #c4b5fd; }
+  </style>
+
+  <rect x="0" y="0" width="1000" height="500" fill="#ffffff"/>
+
+  <text class="t lab" x="40" y="28" font-size="15">Disease head and image-text matching head</text>
+  <text class="t sub" x="40" y="46">Sealed test, 14 CheXbert labels with the predeclared U-Ignore mask.</text>
+
+  <line class="grid" x1="90" y1="350" x2="620" y2="350"/>
+  <line class="grid" x1="90" y1="294" x2="620" y2="294"/>
+  <line class="grid" x1="90" y1="238" x2="620" y2="238"/>
+  <line class="grid" x1="90" y1="182" x2="620" y2="182"/>
+  <line class="grid" x1="90" y1="126" x2="620" y2="126"/>
+  <line class="grid" x1="90" y1="70" x2="620" y2="70"/>
+  <line class="axis" x1="90" y1="70" x2="90" y2="350"/>
+  <line class="axis" x1="90" y1="350" x2="620" y2="350"/>
+
+  <text class="t sub" x="82" y="354" text-anchor="end">0.0</text>
+  <text class="t sub" x="82" y="298" text-anchor="end">0.2</text>
+  <text class="t sub" x="82" y="242" text-anchor="end">0.4</text>
+  <text class="t sub" x="82" y="186" text-anchor="end">0.6</text>
+  <text class="t sub" x="82" y="130" text-anchor="end">0.8</text>
+  <text class="t sub" x="82" y="74" text-anchor="end">1.0</text>
+
+  <!-- Disease image-only -->
+  <rect class="a1" x="130" y="144" width="56" height="206" rx="3"/>
+  <rect class="a2" x="194" y="291" width="56" height="59" rx="3"/>
+  <text class="t num" x="158" y="137" text-anchor="middle">0.7117</text>
+  <text class="t num" x="222" y="284" text-anchor="middle">0.2045</text>
+  <text class="t lab" x="190" y="372" text-anchor="middle">Disease, image-only</text>
+  <text class="t sub" x="190" y="390" text-anchor="middle">AUROC and macro-F1</text>
+
+  <!-- Disease text-only -->
+  <rect class="a1" x="310" y="101" width="56" height="249" rx="3"/>
+  <rect class="a2" x="374" y="210" width="56" height="140" rx="3"/>
+  <text class="t num" x="338" y="94" text-anchor="middle">0.8589</text>
+  <text class="t num" x="402" y="203" text-anchor="middle">0.4818</text>
+  <text class="t lab" x="370" y="372" text-anchor="middle">Disease, text-only</text>
+  <text class="t sub" x="370" y="390" text-anchor="middle">AUROC and macro-F1</text>
+
+  <!-- ITM -->
+  <rect class="a1" x="490" y="149" width="56" height="201" rx="3"/>
+  <rect class="a2" x="554" y="164" width="56" height="186" rx="3"/>
+  <text class="t num" x="518" y="142" text-anchor="middle">0.6942</text>
+  <text class="t num" x="582" y="157" text-anchor="middle">0.6419</text>
+  <text class="t lab" x="550" y="372" text-anchor="middle">Image-text matching</text>
+  <text class="t sub" x="550" y="390" text-anchor="middle">AUROC and accuracy</text>
+
+  <!-- legend -->
+  <rect class="a1" x="90" y="460" width="14" height="14" rx="2"/>
+  <text class="t sub" x="110" y="471">AUROC</text>
+  <rect class="a2" x="180" y="460" width="14" height="14" rx="2"/>
+  <text class="t sub" x="200" y="471">macro-F1 or accuracy</text>
+
+  <!-- panel (taller so missing-modality lines fit) -->
+  <rect x="650" y="70" width="330" height="330" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1.2" rx="10"/>
+  <text class="t lab" x="670" y="98">How to read the gap</text>
+  <line x1="670" y1="110" x2="960" y2="110" stroke="#e5e7eb" stroke-width="1.2"/>
+
+  <text class="t sub" x="670" y="140">The 14 CheXbert labels are derived from</text>
+  <text class="t sub" x="670" y="158">report text, so a text-only head is</text>
+  <text class="t sub" x="670" y="176">expected to score higher.</text>
+
+  <text class="t sub" x="670" y="212">This is not evidence that text</text>
+  <text class="t sub" x="670" y="230">embeddings are clinically superior</text>
+  <text class="t sub" x="670" y="248">to image embeddings.</text>
+
+  <line x1="670" y1="272" x2="960" y2="272" stroke="#e5e7eb" stroke-width="1.2"/>
+
+  <text class="t sub" x="670" y="298">ITM pairs: 6,378</text>
+  <text class="t sub" x="670" y="316">positive plus in-batch negatives</text>
+  <text class="t sub" x="670" y="348">Missing-modality run uses the same</text>
+  <text class="t sub" x="670" y="366">disease head on one modality at a time.</text>
+</svg>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" role="img" aria-labelledby="abl-title abl-desc">
+  <title id="abl-title">RadPair ablations</title>
+  <desc id="abl-desc">Two panels. Left, ablation A2 compares adaptation off, meaning frozen projections at validation image-to-text Recall at 1 of 0.01054, with adaptation on, meaning PEFT at 0.01910, on the same Findings plus Impression recipe. Right, ablation A1 compares Findings plus Impression at 0.01910 over 1,518 validation pairs against Findings-only at 0.03297 over 364 validation pairs. The Findings-only run uses a smaller gallery and a different sample availability rule, so its absolute Recall at 1 is not directly comparable, though it is about 12 times its own chance level of 0.00275.</desc>
+
+  <style>
+    .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+    .lab { font-size: 13.5px; font-weight: 600; fill: #1f2937; }
+    .hd { font-size: 14.5px; font-weight: 700; fill: #111827; }
+    .sub { font-size: 11.5px; fill: #4b5563; }
+    .num { font-size: 12px; font-weight: 700; fill: #111827; }
+    .axis { stroke: #9ca3af; stroke-width: 1.2; }
+    .grid { stroke: #e5e7eb; stroke-width: 1; }
+    .off { fill: #94a3b8; }
+    .on { fill: #4f46e5; }
+    .full { fill: #0f766e; }
+    .find { fill: #f59e0b; }
+  </style>
+
+  <rect x="0" y="0" width="1000" height="480" fill="#ffffff"/>
+
+  <text class="t lab" x="40" y="28" font-size="15">Two ablations</text>
+
+  <!-- Panel A2 -->
+  <rect x="30" y="46" width="452" height="400" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.2" rx="10"/>
+  <text class="t hd" x="52" y="74">A2 &#183; Adaptation on versus off</text>
+  <text class="t sub" x="52" y="94">Same Findings + Impression recipe. Validation i2t R&#64;1.</text>
+
+  <line class="grid" x1="70" y1="350" x2="450" y2="350"/>
+  <line class="grid" x1="70" y1="292" x2="450" y2="292"/>
+  <line class="grid" x1="70" y1="234" x2="450" y2="234"/>
+  <line class="grid" x1="70" y1="176" x2="450" y2="176"/>
+  <line class="axis" x1="70" y1="176" x2="70" y2="350"/>
+  <line class="axis" x1="70" y1="350" x2="450" y2="350"/>
+  <text class="t sub" x="62" y="354" text-anchor="end">0.000</text>
+  <text class="t sub" x="62" y="296" text-anchor="end">0.010</text>
+  <text class="t sub" x="62" y="238" text-anchor="end">0.020</text>
+  <text class="t sub" x="62" y="180" text-anchor="end">0.030</text>
+
+  <rect class="off" x="130" y="271" width="86" height="79" rx="3"/>
+  <rect class="on" x="286" y="207" width="86" height="143" rx="3"/>
+  <text class="t num" x="173" y="264" text-anchor="middle">0.01054</text>
+  <text class="t num" x="329" y="200" text-anchor="middle">0.01910</text>
+  <text class="t lab" x="173" y="372" text-anchor="middle">Off</text>
+  <text class="t sub" x="173" y="389" text-anchor="middle">G_frozen</text>
+  <text class="t lab" x="329" y="372" text-anchor="middle">On</text>
+  <text class="t sub" x="329" y="389" text-anchor="middle">PEFT</text>
+
+  <line x1="52" y1="410" x2="460" y2="410" stroke="#e5e7eb" stroke-width="1.2"/>
+  <text class="t sub" x="52" y="432">R&#64;1 rises 1.81&#215; when the encoder is adapted.</text>
+
+  <!-- Panel A1 -->
+  <rect x="518" y="46" width="452" height="400" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.2" rx="10"/>
+  <text class="t hd" x="540" y="74">A1 &#183; Text section</text>
+  <text class="t sub" x="540" y="94">Validation i2t R&#64;1.</text>
+  <text class="t sub" x="540" y="110">Different galleries, read with care.</text>
+
+  <line class="grid" x1="558" y1="350" x2="938" y2="350"/>
+  <line class="grid" x1="558" y1="292" x2="938" y2="292"/>
+  <line class="grid" x1="558" y1="234" x2="938" y2="234"/>
+  <line class="grid" x1="558" y1="176" x2="938" y2="176"/>
+  <line class="axis" x1="558" y1="176" x2="558" y2="350"/>
+  <line class="axis" x1="558" y1="350" x2="938" y2="350"/>
+  <text class="t sub" x="550" y="354" text-anchor="end">0.000</text>
+  <text class="t sub" x="550" y="296" text-anchor="end">0.010</text>
+  <text class="t sub" x="550" y="238" text-anchor="end">0.020</text>
+  <text class="t sub" x="550" y="180" text-anchor="end">0.030</text>
+
+  <rect class="full" x="618" y="207" width="86" height="143" rx="3"/>
+  <rect class="find" x="774" y="102" width="86" height="248" rx="3"/>
+  <text class="t num" x="661" y="200" text-anchor="middle">0.01910</text>
+  <text class="t num" x="817" y="95" text-anchor="middle">0.03297</text>
+  <text class="t lab" x="661" y="372" text-anchor="middle">Findings + Impression</text>
+  <text class="t sub" x="661" y="389" text-anchor="middle">1,518 pairs &#183; chance 0.00066</text>
+  <text class="t lab" x="817" y="372" text-anchor="middle">Findings only</text>
+  <text class="t sub" x="817" y="389" text-anchor="middle">364 pairs &#183; chance 0.00275</text>
+
+  <line x1="540" y1="410" x2="948" y2="410" stroke="#e5e7eb" stroke-width="1.2"/>
+  <text class="t sub" x="540" y="432">&#8776;29&#215; chance and &#8776;12&#215; chance respectively.</text>
+</svg>

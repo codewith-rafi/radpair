@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 470" width="1040" height="470" role="img" aria-labelledby="prot-title prot-desc">
+  <title id="prot-title">RadPair experimental protocol</title>
+  <desc id="prot-desc">A licensed CheXpert Plus dump is reduced to a controlled 15,000-pair subset, split patient-level 70/10/20, aligned with contrastive training on validation only, the parameter-efficient encoder is selected, disease and image-text matching heads are trained, missing-modality validation runs, and the sealed test is evaluated once. Metrics, logs, checkpoints, and the embedding API are produced.</desc>
+
+  <defs>
+    <marker id="parr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+      .lab { font-size: 13px; font-weight: 600; fill: #1f2937; }
+      .sub { font-size: 11.5px; fill: #4b5563; }
+      .step { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 9; }
+      .guard { fill: #fef2f2; stroke: #fca5a5; stroke-width: 1.5; rx: 9; }
+      .out { fill: #ecfdf5; stroke: #6ee7b7; stroke-width: 1.5; rx: 9; }
+      .edge { stroke: #64748b; stroke-width: 1.6; fill: none; marker-end: url(#parr); }
+      .stepnum { font-size: 11px; font-weight: 700; fill: #ffffff; }
+      .circ { fill: #4f46e5; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="470" fill="#ffffff"/>
+
+  <!-- Row 1 -->
+  <rect class="step" x="20" y="40" width="200" height="66"/>
+  <text class="t lab" x="120" y="70" text-anchor="middle">Licensed dump</text>
+  <text class="t sub" x="120" y="90" text-anchor="middle">CheXpert Plus, AIMI terms</text>
+
+  <rect class="step" x="256" y="40" width="200" height="66"/>
+  <text class="t lab" x="356" y="70" text-anchor="middle">Controlled subset</text>
+  <text class="t sub" x="356" y="90" text-anchor="middle">15,000 frontal study pairs</text>
+
+  <rect class="guard" x="492" y="40" width="220" height="66"/>
+  <text class="t lab" x="602" y="70" text-anchor="middle">Patient-level split</text>
+  <text class="t sub" x="602" y="90" text-anchor="middle">70 / 10 / 20, no patient shared</text>
+
+  <rect class="step" x="748" y="40" width="272" height="66"/>
+  <text class="t lab" x="884" y="70" text-anchor="middle">Contrastive alignment</text>
+  <text class="t sub" x="884" y="90" text-anchor="middle">validation-only model selection</text>
+
+  <path class="edge" d="M 220 73 L 256 73"/>
+  <path class="edge" d="M 456 73 L 492 73"/>
+  <path class="edge" d="M 712 73 L 748 73"/>
+
+  <!-- Row 2 (right to left) -->
+  <rect class="step" x="748" y="164" width="272" height="66"/>
+  <text class="t lab" x="884" y="194" text-anchor="middle">PEFT encoder selected</text>
+  <text class="t sub" x="884" y="214" text-anchor="middle">frozen vs LoRA vs partial e2e</text>
+
+  <rect class="step" x="492" y="164" width="220" height="66"/>
+  <text class="t lab" x="602" y="194" text-anchor="middle">Disease + ITM heads</text>
+  <text class="t sub" x="602" y="214" text-anchor="middle">on frozen PEFT embeddings</text>
+
+  <rect class="guard" x="256" y="164" width="200" height="66"/>
+  <text class="t lab" x="356" y="194" text-anchor="middle">Missing-modality</text>
+  <text class="t sub" x="356" y="214" text-anchor="middle">image-only vs text-only</text>
+
+  <rect class="guard" x="20" y="164" width="200" height="66"/>
+  <text class="t lab" x="120" y="194" text-anchor="middle">One-shot sealed test</text>
+  <text class="t sub" x="120" y="214" text-anchor="middle">3,189 pairs, evaluated once</text>
+
+  <path class="edge" d="M 884 106 L 884 164"/>
+  <path class="edge" d="M 748 197 L 712 197"/>
+  <path class="edge" d="M 492 197 L 456 197"/>
+  <path class="edge" d="M 256 197 L 220 197"/>
+
+  <!-- Outputs -->
+  <rect class="out" x="20" y="300" width="200" height="120"/>
+  <text class="t lab" x="120" y="330" text-anchor="middle">Artifacts</text>
+  <text class="t sub" x="120" y="354" text-anchor="middle">metrics.json</text>
+  <text class="t sub" x="120" y="374" text-anchor="middle">train / eval logs</text>
+  <text class="t sub" x="120" y="394" text-anchor="middle">config snapshots</text>
+
+  <rect class="out" x="256" y="300" width="200" height="120"/>
+  <text class="t lab" x="356" y="330" text-anchor="middle">Safeguards</text>
+  <text class="t sub" x="356" y="354" text-anchor="middle">chance + shuffled controls</text>
+  <text class="t sub" x="356" y="374" text-anchor="middle">U-Ignore label mask</text>
+  <text class="t sub" x="356" y="394" text-anchor="middle">no test tuning</text>
+
+  <rect class="out" x="492" y="300" width="220" height="120"/>
+  <text class="t lab" x="602" y="330" text-anchor="middle">Reusable output</text>
+  <text class="t sub" x="602" y="354" text-anchor="middle">L2-normalized 256-D</text>
+  <text class="t sub" x="602" y="374" text-anchor="middle">image and text</text>
+  <text class="t sub" x="602" y="394" text-anchor="middle">embeddings</text>
+
+  <rect class="out" x="748" y="300" width="272" height="120"/>
+  <text class="t lab" x="884" y="330" text-anchor="middle">Data governance</text>
+  <text class="t sub" x="884" y="354" text-anchor="middle">no public images, report</text>
+  <text class="t sub" x="884" y="374" text-anchor="middle">text, manifests, or binary</text>
+  <text class="t sub" x="884" y="394" text-anchor="middle">checkpoints</text>
+
+  <path class="edge" d="M 120 230 L 120 300"/>
+  <path class="edge" d="M 356 230 L 356 300"/>
+  <path class="edge" d="M 602 230 L 602 300"/>
+  <path class="edge" d="M 884 230 L 884 300"/>
+
+  <text class="t sub" x="20" y="452" font-style="italic">The disease head is trained after contrastive alignment on frozen PEFT embeddings. This is a staged auxiliary-task protocol, not joint multi-loss optimization.</text>
+</svg>

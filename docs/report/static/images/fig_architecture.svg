@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 540" width="1040" height="540" role="img" aria-labelledby="arch-title arch-desc">
+  <title id="arch-title">RadPair dual encoder architecture</title>
+  <desc id="arch-desc">Frontal chest X-ray DICOM is preprocessed with the Chambon Appendix A recipe to 224 by 224 RGB and encoded by a ResNet-50. Radiology report Findings and Impression text is encoded by BioClinicalBERT. Both branches project to 256 dimensions, are L2 normalized, and feed a symmetric InfoNCE loss, an image-text matching head, a 14-label disease head, and the reusable embedding API.</desc>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
+    </marker>
+    <marker id="arr-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+    <style>
+      .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+      .title { font-size: 17px; font-weight: 700; }
+      .lab { font-size: 13.5px; font-weight: 600; fill: #1f2937; }
+      .sub { font-size: 12px; fill: #4b5563; }
+      .mono { font-family: "Consolas", "SF Mono", Menlo, monospace; font-size: 11.5px; fill: #4b5563; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; }
+      .box-enc { fill: #eef4ff; stroke: #93b4f5; stroke-width: 1.5; rx: 10; }
+      .box-proj { fill: #ecfdf5; stroke: #6ee7b7; stroke-width: 1.5; rx: 10; }
+      .box-head { fill: #fef3c7; stroke: #fcd34d; stroke-width: 1.5; rx: 10; }
+      .box-space { fill: #f5f3ff; stroke: #c4b5fd; stroke-width: 1.5; rx: 10; }
+      .edge { stroke: #4b5563; stroke-width: 1.6; fill: none; marker-end: url(#arr); }
+      .edge-acc { stroke: #0f766e; stroke-width: 1.8; fill: none; marker-end: url(#arr-accent); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="540" fill="#ffffff"/>
+
+  <!-- Image branch -->
+  <rect class="box" x="24" y="46" width="176" height="62"/>
+  <text class="t title" x="112" y="72" text-anchor="middle">Frontal CXR</text>
+  <text class="t sub" x="112" y="93" text-anchor="middle">DICOM study</text>
+
+  <rect class="box" x="24" y="140" width="176" height="62"/>
+  <text class="t lab" x="112" y="166" text-anchor="middle">Chambon Appendix A</text>
+  <text class="t sub" x="112" y="187" text-anchor="middle">8-bit JPG &#8594; 224&#215;224 RGB</text>
+
+  <rect class="box-enc" x="256" y="140" width="150" height="62"/>
+  <text class="t lab" x="331" y="166" text-anchor="middle">ResNet-50</text>
+  <text class="t sub" x="331" y="187" text-anchor="middle">Image encoder</text>
+
+  <rect class="box-proj" x="462" y="140" width="150" height="62"/>
+  <text class="t lab" x="537" y="166" text-anchor="middle">Linear proj.</text>
+  <text class="t sub" x="537" y="187" text-anchor="middle">256 dimensions</text>
+
+  <!-- Text branch -->
+  <rect class="box" x="24" y="292" width="176" height="62"/>
+  <text class="t title" x="112" y="318" text-anchor="middle">Radiology report</text>
+  <text class="t sub" x="112" y="339" text-anchor="middle">Findings + Impression</text>
+
+  <rect class="box-enc" x="256" y="292" width="150" height="62"/>
+  <text class="t lab" x="331" y="318" text-anchor="middle">BioClinicalBERT</text>
+  <text class="t sub" x="331" y="339" text-anchor="middle">CLS representation</text>
+
+  <rect class="box-proj" x="462" y="292" width="150" height="62"/>
+  <text class="t lab" x="537" y="318" text-anchor="middle">Linear proj.</text>
+  <text class="t sub" x="537" y="339" text-anchor="middle">256 dimensions</text>
+
+  <path class="edge" d="M 200 77 L 200 171 L 256 171"/>
+  <path class="edge" d="M 406 171 L 462 171"/>
+  <path class="edge" d="M 200 323 L 256 323"/>
+  <path class="edge" d="M 406 323 L 462 323"/>
+
+  <!-- Shared normalization -->
+  <rect class="box-proj" x="668" y="216" width="132" height="62"/>
+  <text class="t lab" x="734" y="242" text-anchor="middle">L2 norm</text>
+  <text class="t sub" x="734" y="263" text-anchor="middle">unit sphere</text>
+
+  <path class="edge-acc" d="M 612 171 L 660 171 L 660 232 L 668 232"/>
+  <path class="edge-acc" d="M 612 323 L 660 323 L 660 262 L 668 262"/>
+
+  <!-- Heads -->
+  <rect class="box-head" x="24" y="426" width="216" height="74"/>
+  <text class="t lab" x="132" y="452" text-anchor="middle">Symmetric InfoNCE</text>
+  <text class="t sub" x="132" y="473" text-anchor="middle">temperature 0.07</text>
+  <text class="t sub" x="132" y="490" text-anchor="middle">alignment objective</text>
+
+  <rect class="box-head" x="268" y="426" width="216" height="74"/>
+  <text class="t lab" x="376" y="452" text-anchor="middle">ITM head</text>
+  <text class="t sub" x="376" y="473" text-anchor="middle">concatenation MLP</text>
+  <text class="t sub" x="376" y="490" text-anchor="middle">in-batch negatives</text>
+
+  <rect class="box-head" x="512" y="426" width="216" height="74"/>
+  <text class="t lab" x="620" y="452" text-anchor="middle">Disease head</text>
+  <text class="t sub" x="620" y="473" text-anchor="middle">14 CheXbert labels</text>
+  <text class="t sub" x="620" y="490" text-anchor="middle">U-Ignore masked BCE</text>
+
+  <rect class="box-space" x="756" y="426" width="260" height="74"/>
+  <text class="t lab" x="886" y="452" text-anchor="middle">Embedding API</text>
+  <text class="t mono" x="886" y="473" text-anchor="middle">embed_image()</text>
+  <text class="t mono" x="886" y="490" text-anchor="middle">embed_text()</text>
+
+  <path class="edge-acc" d="M 734 278 L 734 380 L 132 380 L 132 426"/>
+  <path class="edge-acc" d="M 734 278 L 734 380 L 376 380 L 376 426"/>
+  <path class="edge-acc" d="M 734 278 L 734 380 L 620 380 L 620 426"/>
+  <path class="edge-acc" d="M 734 278 L 800 278 L 800 380 L 886 380 L 886 426"/>
+
+  <!-- Caption -->
+  <text class="t sub" x="24" y="528" font-style="italic">Shared 256-dimensional space. The disease and ITM heads are trained after alignment on frozen PEFT embeddings.</text>
+</svg>

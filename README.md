@@ -12,6 +12,8 @@
 
 Contrastive InfoNCE · Unified 256-D embeddings · U-Ignore · Missing-modality
 
+[Project page](https://codewith-rafi.github.io/radpair/)
+
 </div>
 
 ## Overview

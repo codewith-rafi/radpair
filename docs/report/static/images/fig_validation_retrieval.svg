@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 530" width="1000" height="530" role="img" aria-labelledby="val-title val-desc">
+  <title id="val-title">Validation retrieval, three-way adaptation comparison</title>
+  <desc id="val-desc">Grouped bar chart of validation Recall at 1. G frozen reaches 0.01054 image-to-text and 0.00922 text-to-image with 721,408 trainable parameters. PEFT reaches 0.01910 in both directions with 1,016,320 trainable parameters. Partial end-to-end reaches 0.02503 in both directions with 58,803,968 trainable parameters. Chance Recall at 1 on the 1,518-pair validation gallery is 0.000659.</desc>
+
+  <style>
+    .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+    .lab { font-size: 13.5px; font-weight: 600; fill: #1f2937; }
+    .sub { font-size: 11.5px; fill: #4b5563; }
+    .num { font-size: 12px; font-weight: 700; fill: #111827; }
+    .axis { stroke: #9ca3af; stroke-width: 1.2; }
+    .grid { stroke: #e5e7eb; stroke-width: 1; }
+    .i2t { fill: #4f46e5; }
+    .t2i { fill: #0ea5e9; }
+    .chance { stroke: #dc2626; stroke-width: 1.6; stroke-dasharray: 6 4; }
+  </style>
+
+  <rect x="0" y="0" width="1000" height="530" fill="#ffffff"/>
+
+  <text class="t lab" x="40" y="28" font-size="15">Validation Recall&#64;1 by adaptation group</text>
+  <text class="t sub" x="40" y="46">1,518-pair validation gallery. Chance R&#64;1 = 1 / 1,518 = 0.000659.</text>
+
+  <!-- gridlines + y axis -->
+  <line class="grid" x1="90" y1="380" x2="640" y2="380"/>
+  <line class="grid" x1="90" y1="273" x2="640" y2="273"/>
+  <line class="grid" x1="90" y1="167" x2="640" y2="167"/>
+  <line class="grid" x1="90" y1="60" x2="640" y2="60"/>
+  <line class="axis" x1="90" y1="60" x2="90" y2="380"/>
+  <line class="axis" x1="90" y1="380" x2="640" y2="380"/>
+
+  <text class="t sub" x="82" y="384" text-anchor="end">0.000</text>
+  <text class="t sub" x="82" y="277" text-anchor="end">0.010</text>
+  <text class="t sub" x="82" y="171" text-anchor="end">0.020</text>
+  <text class="t sub" x="82" y="64" text-anchor="end">0.030</text>
+
+  <!-- chance line -->
+  <line class="chance" x1="90" y1="373" x2="640" y2="373"/>
+  <text class="t sub" x="638" y="366" text-anchor="end" fill="#dc2626">chance</text>
+
+  <!-- G_frozen -->
+  <rect class="i2t" x="142" y="268" width="52" height="112" rx="3"/>
+  <rect class="t2i" x="206" y="282" width="52" height="98" rx="3"/>
+  <text class="t num" x="168" y="261" text-anchor="middle">0.0105</text>
+  <text class="t num" x="232" y="275" text-anchor="middle">0.0092</text>
+  <text class="t lab" x="200" y="402" text-anchor="middle">G_frozen</text>
+  <text class="t sub" x="200" y="419" text-anchor="middle">best epoch 7</text>
+
+  <!-- PEFT -->
+  <rect class="i2t" x="332" y="176" width="52" height="204" rx="3"/>
+  <rect class="t2i" x="396" y="176" width="52" height="204" rx="3"/>
+  <text class="t num" x="358" y="169" text-anchor="middle">0.0191</text>
+  <text class="t num" x="422" y="169" text-anchor="middle">0.0191</text>
+  <text class="t lab" x="390" y="402" text-anchor="middle">PEFT (default)</text>
+  <text class="t sub" x="390" y="419" text-anchor="middle">best epoch 11</text>
+
+  <!-- Partial e2e -->
+  <rect class="i2t" x="522" y="113" width="52" height="267" rx="3"/>
+  <rect class="t2i" x="586" y="113" width="52" height="267" rx="3"/>
+  <text class="t num" x="548" y="106" text-anchor="middle">0.0250</text>
+  <text class="t num" x="612" y="106" text-anchor="middle">0.0250</text>
+  <text class="t lab" x="580" y="402" text-anchor="middle">Partial e2e</text>
+  <text class="t sub" x="580" y="419" text-anchor="middle">best epoch 10</text>
+
+  <!-- legend -->
+  <rect class="i2t" x="90" y="486" width="14" height="14" rx="2"/>
+  <text class="t sub" x="110" y="497">image&#8594;text</text>
+  <rect class="t2i" x="200" y="486" width="14" height="14" rx="2"/>
+  <text class="t sub" x="220" y="497">text&#8594;image</text>
+
+  <!-- side panel (taller so Partial e2e footnote fits) -->
+  <rect x="672" y="60" width="308" height="360" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1.2" rx="10"/>
+  <text class="t lab" x="692" y="88">Trainable parameters</text>
+  <line x1="692" y1="100" x2="960" y2="100" stroke="#e5e7eb" stroke-width="1.2"/>
+
+  <text class="t sub" x="692" y="128">G_frozen</text>
+  <text class="t num" x="960" y="128" text-anchor="end">721,408</text>
+  <rect x="692" y="136" width="268" height="8" fill="#e5e7eb" rx="4"/>
+  <rect x="692" y="136" width="3.3" height="8" fill="#4f46e5" rx="4"/>
+  <text class="t sub" x="692" y="162" font-style="italic">projections only</text>
+
+  <text class="t sub" x="692" y="196">PEFT</text>
+  <text class="t num" x="960" y="196" text-anchor="end">1,016,320</text>
+  <rect x="692" y="204" width="268" height="8" fill="#e5e7eb" rx="4"/>
+  <rect x="692" y="204" width="4.6" height="8" fill="#4f46e5" rx="4"/>
+  <text class="t sub" x="692" y="230" font-style="italic">ResNet frozen, LoRA on text Q/V</text>
+
+  <text class="t sub" x="692" y="264">Partial e2e</text>
+  <text class="t num" x="960" y="264" text-anchor="end">58,803,968</text>
+  <rect x="692" y="272" width="268" height="8" fill="#e5e7eb" rx="4"/>
+  <rect x="692" y="272" width="268" height="8" fill="#4f46e5" rx="4"/>
+  <text class="t sub" x="692" y="298" font-style="italic">ResNet layer 4, last six text layers</text>
+
+  <line x1="692" y1="318" x2="960" y2="318" stroke="#e5e7eb" stroke-width="1.2"/>
+  <text class="t sub" x="692" y="346">Shuffled-pair control (i2t R&#64;1):</text>
+  <text class="t sub" x="692" y="368">G_frozen 0.00092 &#183; PEFT 0.00079</text>
+  <text class="t sub" x="692" y="390">Partial e2e 0.00066</text>
+</svg>

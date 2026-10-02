@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 340" width="1000" height="340" role="img" aria-labelledby="api-title api-desc">
+  <title id="api-title">RadPair embedding API contract</title>
+  <desc id="api-desc">A schematic of the reusable embedding interface. Callers supply ImageNet-normalized image tensors or text token IDs, call embed_image or embed_text on a loaded dual encoder, and receive L2-normalized 256-dimensional vectors that are directly comparable by cosine similarity.</desc>
+
+  <defs>
+    <marker id="aarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+    <style>
+      .t { font-family: "Inter", "Segoe UI", system-ui, sans-serif; fill: #111827; }
+      .lab { font-size: 13.5px; font-weight: 600; fill: #1f2937; }
+      .sub { font-size: 11.5px; fill: #4b5563; }
+      .mono { font-family: "Consolas", "SF Mono", Menlo, monospace; font-size: 12px; fill: #0f172a; }
+      .in { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; }
+      .fn { fill: #ecfdf5; stroke: #0f766e; stroke-width: 1.6; rx: 10; }
+      .out { fill: #eef2ff; stroke: #818cf8; stroke-width: 1.6; rx: 10; }
+      .edge { stroke: #0f766e; stroke-width: 1.7; fill: none; marker-end: url(#aarr); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="340" fill="#ffffff"/>
+
+  <rect class="in" x="24" y="40" width="248" height="88"/>
+  <text class="t lab" x="148" y="70" text-anchor="middle">Image caller</text>
+  <text class="t mono" x="148" y="94" text-anchor="middle">(B, 3, 224, 224)</text>
+  <text class="t sub" x="148" y="114" text-anchor="middle">ImageNet-normalized</text>
+
+  <rect class="in" x="24" y="188" width="248" height="88"/>
+  <text class="t lab" x="148" y="218" text-anchor="middle">Text caller</text>
+  <text class="t mono" x="148" y="242" text-anchor="middle">input_ids</text>
+  <text class="t sub" x="148" y="262" text-anchor="middle">+ attention_mask</text>
+
+  <rect class="fn" x="368" y="40" width="248" height="88"/>
+  <text class="t mono" x="492" y="78" text-anchor="middle">embed_image(</text>
+  <text class="t mono" x="492" y="98" text-anchor="middle">model, pixels)</text>
+
+  <rect class="fn" x="368" y="188" width="248" height="88"/>
+  <text class="t mono" x="492" y="226" text-anchor="middle">embed_text(</text>
+  <text class="t mono" x="492" y="246" text-anchor="middle">model, ids, mask)</text>
+
+  <rect class="out" x="712" y="40" width="264" height="88"/>
+  <text class="t lab" x="844" y="70" text-anchor="middle">256-D L2-normalized</text>
+  <text class="t sub" x="844" y="94" text-anchor="middle">image embedding</text>
+  <text class="t sub" x="844" y="114" text-anchor="middle">directly comparable by cosine</text>
+
+  <rect class="out" x="712" y="188" width="264" height="88"/>
+  <text class="t lab" x="844" y="218" text-anchor="middle">256-D L2-normalized</text>
+  <text class="t sub" x="844" y="242" text-anchor="middle">text embedding</text>
+  <text class="t sub" x="844" y="262" text-anchor="middle">same space, same encoder</text>
+
+  <path class="edge" d="M 272 84 L 368 84"/>
+  <path class="edge" d="M 272 232 L 368 232"/>
+  <path class="edge" d="M 616 84 L 712 84"/>
+  <path class="edge" d="M 616 232 L 712 232"/>
+
+  <path class="edge" d="M 844 128 L 844 188"/>
+
+  <text class="t sub" x="24" y="316" font-style="italic">Schematic of the interface contract. Load the encoder with load_dual_encoder(device=...) and a local tokenizer; see docs/embed_api.md for checkpoint and PEFT loading details.</text>
+</svg>

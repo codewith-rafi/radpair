@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="RadPair - Cross-Modal Alignment of Chest X-ray and Radiology Report Text">
+  <meta name="description" content="RadPair aligns chest X-rays with radiology reports using a ResNet-50 + BioClinicalBERT dual encoder trained with symmetric InfoNCE, producing shared 256-dimensional embeddings. Evaluated on a controlled 15,000-pair CheXpert Plus subset with patient-level splits and honest chance baselines.">
+  <meta name="keywords" content="contrastive learning, InfoNCE, chest X-ray, radiology report, cross-modal alignment, medical imaging, CheXpert Plus, BioClinicalBERT, PEFT, LoRA, missing modality, U-Ignore">
+  <meta name="author" content="Rafi Ahmed">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Machine Intelligence Lab, Sichuan University">
+  <meta property="og:title" content="RadPair - Cross-Modal Alignment of Chest X-ray and Radiology Report Text">
+  <meta property="og:description" content="A ResNet-50 + BioClinicalBERT dual encoder trained with symmetric InfoNCE on a controlled 15,000-pair CheXpert Plus subset, with patient-level splits, chance and shuffled-pair controls, and a reusable 256-dimensional embedding API.">
+  <meta property="og:url" content="https://codewith-rafi.github.io/radpair/">
+  <meta property="og:image" content="https://codewith-rafi.github.io/radpair/static/images/social_preview.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="RadPair - cross-modal alignment for chest X-ray and clinical text">
+  <meta property="article:published_time" content="2026-10-02T00:00:00.000Z">
+  <meta property="article:author" content="Rafi Ahmed">
+  <meta property="article:section" content="Medical Image and Text Representation Learning">
+  <meta property="article:tag" content="contrastive learning">
+  <meta property="article:tag" content="chest X-ray">
+  <meta property="article:tag" content="medical vision-language">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RadPair - Cross-Modal Alignment of Chest X-ray and Radiology Report Text">
+  <meta name="twitter:description" content="ResNet-50 + BioClinicalBERT dual encoder, symmetric InfoNCE, shared 256-D embeddings, and a controlled CheXpert Plus evaluation with honest baselines.">
+  <meta name="twitter:image" content="https://codewith-rafi.github.io/radpair/static/images/social_preview.svg">
+  <meta name="twitter:image:alt" content="RadPair - cross-modal alignment for chest X-ray and clinical text">
+
+  <meta name="citation_title" content="RadPair: Cross-Modal Alignment and Unified Representation Methods for Medical Imaging and Clinical Text Data">
+  <meta name="citation_author" content="Ahmed, Rafi">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_abstract" content="RadPair evaluates whether a lightweight ResNet-50 + BioClinicalBERT dual encoder can learn useful chest X-ray to radiology-report alignment without training a new foundation model. On a controlled 15,000-pair CheXpert Plus subset with patient-level splits, the model reaches 0.00878 image-to-text Recall@1 and 0.01035 text-to-image Recall@1 on a sealed 3,189-pair test set, roughly 28 and 33 times chance, plus 0.8589 macro-AUROC on 14 disease labels from text embeddings and 0.6942 AUROC for image-text matching.">
+
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="msapplication-TileColor" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>RadPair | Cross-Modal Alignment of Chest X-ray and Radiology Report Text</title>
+
+  <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "RadPair",
+    "description": "Cross-modal alignment and unified representation methods for chest X-ray images and clinical text. A ResNet-50 and BioClinicalBERT dual encoder trained with symmetric InfoNCE on a controlled 15,000-pair CheXpert Plus subset, exposing L2-normalized 256-dimensional image and text embeddings.",
+    "codeRepository": "https://github.com/codewith-rafi/radpair",
+    "url": "https://codewith-rafi.github.io/radpair/",
+    "author": {
+      "@type": "Person",
+      "name": "Rafi Ahmed",
+      "jobTitle": "Research Assistant",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Machine Intelligence Lab, Sichuan University"
+      },
+      "sameAs": [
+        "https://github.com/codewith-rafi",
+        "https://www.machineilab.org"
+      ]
+    },
+    "programmingLanguage": ["Python"],
+    "runtimePlatform": "Python 3.11",
+    "keywords": [
+      "contrastive learning",
+      "InfoNCE",
+      "chest X-ray",
+      "radiology report",
+      "cross-modal alignment",
+      "CheXpert Plus",
+      "BioClinicalBERT",
+      "parameter-efficient fine-tuning",
+      "missing modality",
+      "U-Ignore"
+    ],
+    "featureList": [
+      "Bidirectional image-text retrieval evaluation",
+      "Image-text matching head with in-batch negatives",
+      "14-label disease auxiliary head with U-Ignore masking",
+      "Missing-modality analysis",
+      "Chance and shuffled-pair retrieval controls",
+      "Single-GPU parameter-efficient adaptation"
+    ],
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Machine Intelligence Lab",
+    "url": "https://www.machineilab.org",
+    "parentOrganization": {
+      "@type": "CollegeOrUniversity",
+      "name": "Sichuan University"
+    },
+    "member": {
+      "@type": "Person",
+      "name": "Rafi Ahmed"
+    }
+  }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .hero.radpair-hero { background: linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 55%, #0e4f63 100%); color: #ffffff; }
+    .radpair-hero .publication-title { color: #ffffff; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1.35rem !important; }
+    .radpair-hero .brand-rad { color: #ffffff; }
+    .radpair-hero .brand-pair { color: #a5f3fc; }
+    .radpair-hero .tagline { color: #c7d2fe; line-height: 1.35; }
+    .radpair-hero .publication-authors { font-size: 1.35rem; margin-bottom: 0.35rem !important; }
+    .radpair-hero .publication-authors a {
+      color: #ffffff !important;
+      font-weight: 700;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.75);
+    }
+    .radpair-hero .publication-authors a::after {
+      display: none;
+    }
+    .radpair-hero .publication-authors a:hover {
+      color: #a5f3fc !important;
+      border-bottom-color: #a5f3fc;
+    }
+    .radpair-hero .affiliation { color: #e0e7ff; margin-top: 0.15rem; }
+    .radpair-hero .button.is-dark { background: #ffffff; color: #1e1b4b; }
+    .radpair-hero .button.is-dark:hover { background: #a5f3fc; color: #1e1b4b; }
+    .radpair-hero .button.is-outlined-inverse { background: transparent; color: #ffffff; border: 1px solid rgba(255,255,255,0.6); }
+    .radpair-hero .button.is-outlined-inverse:hover { border-color: #ffffff; background: rgba(255,255,255,0.1); color: #ffffff; }
+    .question-box { border-left: 4px solid #4f46e5; background: #ffffff; box-shadow: 0 1px 3px rgba(16,24,40,0.08); }
+    .figure { margin: 1.5rem auto; }
+    .figure img { width: 100%; height: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; }
+    .figure figcaption { font-size: 0.85rem; color: #4b5563; text-align: center; margin-top: 0.6rem; }
+    .stat-tile { border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; height: 100%; }
+    .stat-tile .value { font-size: 1.6rem; font-weight: 800; color: #1e1b4b; }
+    .stat-tile .label { font-size: 0.78rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pre-block { background: #0f172a; color: #e2e8f0; padding: 1rem 1.1rem; border-radius: 8px; overflow-x: auto; font-size: 0.82rem; line-height: 1.55; }
+    .pre-block code { color: #e2e8f0; background: transparent; font-family: Consolas, 'SF Mono', Menlo, monospace; }
+    .note-block { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 1rem 1.1rem; }
+    .table td, .table th { font-size: 0.9rem; vertical-align: top; }
+    .num-cell { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .link-button-row { margin-top: 1.25rem; }
+    .link-block { margin: 0.35rem; }
+    .section-rule { border: 0; border-top: 1px solid #e5e7eb; margin: 2.5rem 0; }
+    .foot-note { font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <div class="more-works-container">
+    <button class="more-works-btn" onclick="toggleMoreWorks()" title="Related work behind RadPair">
+      <i class="fas fa-book"></i>
+      Related Work
+      <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="more-works-dropdown" id="moreWorksDropdown">
+      <div class="dropdown-header">
+        <h4>Related Work</h4>
+        <button class="close-btn" onclick="toggleMoreWorks()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="works-list">
+        <a href="https://arxiv.org/abs/2103.00020" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>Learning Transferable Visual Models From Natural Language Supervision</h5>
+            <p>The image-text contrastive objective RadPair adapts, in its natural-domain form.</p>
+            <span class="work-venue">ICML 2021 &middot; CLIP</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/2010.00747" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>Contrastive Learning of Medical Visual Representations from Paired Images and Text</h5>
+            <p>Bidirectional contrastive alignment of medical images with their paired descriptive text.</p>
+            <span class="work-venue">MLHC 2022 &middot; ConVIRT</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/2310.13292" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>CXR-CLIP: Toward Large Scale Chest X-ray Language-Image Pre-training</h5>
+            <p>Chest X-ray language-image pre-training using multiple images and multiple report sections.</p>
+            <span class="work-venue">MICCAI 2023</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/2210.10163" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>MedCLIP: Contrastive Learning from Unpaired Medical Images and Text</h5>
+            <p>Decouples images and text to scale contrastive medical training data and reduce false negatives.</p>
+            <span class="work-venue">Findings of EMNLP 2022</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/2405.19538" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>CheXpert Plus</h5>
+            <p>The source dataset used here, with linked radiology reports and DICOM images.</p>
+            <span class="work-venue">arXiv 2024 &middot; Stanford AIMI</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/1901.07031" class="work-item" target="_blank" rel="noopener">
+          <div class="work-info">
+            <h5>CheXpert: A Large Chest Radiograph Dataset with Uncertainty Labels</h5>
+            <p>Origin of the 14 CheXbert observations and the uncertain labels RadPair masks with U-Ignore.</p>
+            <span class="work-venue">AAAI 2019</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content">
+
+  <section class="hero radpair-hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title"><span class="brand-rad">Rad</span><span class="brand-pair">Pair</span></h1>
+            <p class="subtitle is-4 tagline">Cross-Modal Alignment and Unified Representation Methods<br>for Medical Imaging and Clinical Text Data</p>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://github.com/codewith-rafi" target="_blank" rel="noopener">Rafi Ahmed</a>
+              </span>
+            </div>
+
+            <div class="is-size-6 affiliation">
+              Machine Intelligence Lab, Sichuan University
+            </div>
+
+            <div class="publication-links link-button-row">
+              <span class="link-block">
+                <a href="https://github.com/codewith-rafi/radpair" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/codewith-rafi/radpair#readme" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-outlined-inverse">
+                  <span class="icon"><i class="fas fa-file-lines"></i></span>
+                  <span>Write-up</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/codewith-rafi/radpair/tree/main/experiments" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-outlined-inverse">
+                  <span class="icon"><i class="fas fa-chart-simple"></i></span>
+                  <span>Results</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://stanfordaimi.azurewebsites.net/datasets/5158c524-d3ab-4e02-96e9-6ee9efc110a1" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-outlined-inverse">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>CheXpert Plus</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="question-box" style="padding: 1.5rem;">
+            <p class="is-size-5" style="font-weight: 600; color: #1e1b4b; margin-bottom: 0.6rem;">The question</p>
+            <p style="font-size: 1.05rem; line-height: 1.65;">
+              On a controlled 15,000-pair CheXpert Plus subset, can a lightweight
+              <strong>ResNet-50 + BioClinicalBERT dual encoder</strong> learn useful chest X-ray&ndash;report alignment
+              <em>without training a new foundation model</em>?
+            </p>
+          </div>
+
+          <div class="columns is-mobile is-multiline stat-tiles" style="margin-top: 1.25rem;">
+            <div class="column is-6-mobile is-3-tablet">
+              <div class="stat-tile" style="padding: 1rem;">
+                <div class="value">15,000</div>
+                <div class="label">Study pairs</div>
+              </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+              <div class="stat-tile" style="padding: 1rem;">
+                <div class="value">3,189</div>
+                <div class="label">Sealed test pairs</div>
+              </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+              <div class="stat-tile" style="padding: 1rem;">
+                <div class="value">256-D</div>
+                <div class="label">Shared embeddings</div>
+              </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+              <div class="stat-tile" style="padding: 1rem;">
+                <div class="value">1,016,320</div>
+                <div class="label">Trainable params (PEFT)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Chest X-ray&ndash;report alignment is difficult because reports are long, frequently negative, and partly
+              templated, so a contrastive model can retrieve a plausible report without aligning the image to the specific
+              study. RadPair studies whether that gap can be narrowed cheaply. It evaluates bidirectional retrieval,
+              image&ndash;text matching, 14-label disease classification, label uncertainty handling, and missing-modality
+              behavior under one patient-level protocol on a controlled 15,000-pair CheXpert Plus subset, using a ResNet-50
+              image branch and a BioClinicalBERT text branch trained with symmetric InfoNCE at a fixed temperature of 0.07.
+            </p>
+            <p>
+              The comparison spans three adaptation recipes: frozen projections, LoRA-based parameter-efficient
+              fine-tuning of the text encoder, and a partially end-to-end configuration, all sharing the same split,
+              preprocessing, loss, batch size, epoch budget, and validation-based early stopping. Training and model selection
+              use validation only; the sealed 3,189-pair test set is evaluated once. Retrieval is reported against exact-gallery
+              chance and a five-run shuffled-pair control, and disease metrics use a predeclared U-Ignore mask for uncertain
+              CheXpert labels.
+            </p>
+            <p>
+              Parameter-efficient fine-tuning is the shared default: it reaches validation image&rarr;text Recall@1 of
+              0.01910 against 0.01054 for frozen projections and 0.02503 for partial end-to-end training, with roughly 1.7% of
+              the end-to-end trainable parameters and a far smaller train&ndash;validation gap. On the sealed test, the selected
+              encoder reaches 0.00878 image&rarr;text and 0.01035 text&rarr;image Recall@1, about 28&times; and 33&times; chance; the
+              14-label disease head reaches 0.7117 macro-AUROC from image embeddings and 0.8589 from text embeddings; and the
+              image&ndash;text matching head reaches 0.6942 AUROC. Absolute retrieval numbers stay low, which is the expected
+              behavior for a controlled subset scored against an exact-study gallery. These results support a documented research
+              pipeline and a reusable shared embedding, not diagnostic deployment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Research Design</h2>
+
+      <h3 class="title is-5" style="margin-top: 1.5rem;">Scientific motivation</h3>
+      <div class="content">
+        <p>
+          Radiology reports are long, mostly negative, and partially templated. A model can therefore score a high-quality-looking
+          report as a good match for almost any study. RadPair addresses this with a deliberately narrow, checkable design:
+        </p>
+        <ul>
+          <li><strong>Controlled scale:</strong> 15,000 frontal study pairs rather than an opaque large-scale run.</li>
+          <li><strong>Patient-level separation:</strong> no patient is shared across train, validation, or test.</li>
+          <li><strong>Honest retrieval baselines:</strong> exact-gallery chance and shuffled-pair checks accompany every Recall@K.</li>
+          <li><strong>Declared uncertainty policy:</strong> uncertain CheXpert labels are masked with U-Ignore before test use.</li>
+          <li><strong>Adaptation spectrum:</strong> frozen, parameter-efficient, and partially end-to-end recipes are compared.</li>
+          <li><strong>Reusable output:</strong> normalized 256-dimensional image and text embeddings behind a documented API.</li>
+        </ul>
+      </div>
+
+      <figure class="figure">
+        <img src="static/images/fig_architecture.svg" alt="Dual encoder architecture: ResNet-50 image branch and BioClinicalBERT text branch project to 256 dimensions, are L2 normalized, and feed symmetric InfoNCE, an image-text matching head, a 14-label disease head, and the embedding API." loading="lazy">
+        <figcaption>Figure 1. Dual encoder architecture. Both branches project into one L2-normalized 256-dimensional space.</figcaption>
+      </figure>
+
+      <figure class="figure">
+        <img src="static/images/fig_protocol.svg" alt="Experimental protocol flowchart: licensed CheXpert Plus dump, controlled 15,000-pair subset, patient-level 70/10/20 split, validation-only contrastive alignment, PEFT encoder selection, disease and image-text matching heads, missing-modality validation, one-shot sealed test, then metrics, logs, checkpoints, and the embedding API." loading="lazy">
+        <figcaption>Figure 2. Experimental protocol. Selection happens on validation; the sealed test is touched once, at the end.</figcaption>
+      </figure>
+
+      <h3 class="title is-5" style="margin-top: 2rem;">Data</h3>
+      <div class="content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <tbody>
+            <tr><th>Source</th><td><a href="https://stanfordaimi.azurewebsites.net/datasets/5158c524-d3ab-4e02-96e9-6ee9efc110a1" target="_blank" rel="noopener">CheXpert Plus</a>, accessed under its license</td></tr>
+            <tr><th>Controlled subset</th><td class="num-cell">15,000 frontal study pairs</td></tr>
+            <tr><th>Unique patients</th><td class="num-cell">4,965</td></tr>
+            <tr><th>Split</th><td>Patient-level 70 / 10 / 20</td></tr>
+            <tr><th>Train / validation / test</th><td class="num-cell">10,293 / 1,518 / 3,189 pairs</td></tr>
+            <tr><th>Seed</th><td class="num-cell">42</td></tr>
+            <tr><th>Text fields</th><td>Findings + Impression</td></tr>
+            <tr><th>Labels</th><td>14 CheXbert observations</td></tr>
+            <tr><th>Uncertainty policy</th><td>U-Ignore</td></tr>
+            <tr><th>Image preprocessing</th><td>Chambon Appendix A &rarr; 8-bit JPG &rarr; 224&times;224 RGB</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="title is-5" style="margin-top: 2rem;">Adaptation groups</h3>
+      <div class="content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Trainable components</th>
+              <th style="text-align: right;">Trainable parameters</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>G_frozen</code></td>
+              <td>Image/text projections only</td>
+              <td class="num-cell" style="text-align: right;">721,408</td>
+              <td>Minimal adaptation baseline</td>
+            </tr>
+            <tr>
+              <td><code>PEFT</code></td>
+              <td>ResNet frozen; LoRA on BioClinicalBERT query/value; projections</td>
+              <td class="num-cell" style="text-align: right;">1,016,320</td>
+              <td>Efficiency/generalization trade-off, shared default</td>
+            </tr>
+            <tr>
+              <td>Partial e2e</td>
+              <td>ResNet layer 4; BioClinicalBERT last six layers; projections</td>
+              <td class="num-cell" style="text-align: right;">58,803,968</td>
+              <td>Stronger adaptation and overfitting probe</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="foot-note">
+          All groups share the same split, preprocessing, loss, batch size, maximum epochs, and validation-based early stopping.
+          The partial end-to-end group is not full backbone fine-tuning.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Results</h2>
+
+      <h3 class="title is-5">Validation: three-way contrastive comparison</h3>
+      <p>
+        Chance Recall@1 on the 1,518-pair validation gallery is 1 / 1,518 &asymp; 0.000659.
+      </p>
+
+      <div class="content table-scroll">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Best epoch</th>
+              <th style="text-align: right;">Val i&rarr;t R@1</th>
+              <th style="text-align: right;">Val t&rarr;i R@1</th>
+              <th style="text-align: right;">Shuffle i&rarr;t R@1</th>
+              <th style="text-align: right;">Train@best i&rarr;t</th>
+              <th>Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>G_frozen</code></td>
+              <td class="num-cell">7</td>
+              <td class="num-cell" style="text-align: right;">0.01054</td>
+              <td class="num-cell" style="text-align: right;">0.00922</td>
+              <td class="num-cell" style="text-align: right;">0.00092</td>
+              <td class="num-cell" style="text-align: right;">0.0586</td>
+              <td>Stable but weak alignment</td>
+            </tr>
+            <tr>
+              <td><code>PEFT</code></td>
+              <td class="num-cell">11</td>
+              <td class="num-cell" style="text-align: right;">0.01910</td>
+              <td class="num-cell" style="text-align: right;">0.01910</td>
+              <td class="num-cell" style="text-align: right;">0.00079</td>
+              <td class="num-cell" style="text-align: right;">0.1738</td>
+              <td>Stronger signal with modest overfitting</td>
+            </tr>
+            <tr>
+              <td>Partial e2e</td>
+              <td class="num-cell">10</td>
+              <td class="num-cell" style="text-align: right;">0.02503</td>
+              <td class="num-cell" style="text-align: right;">0.02503</td>
+              <td class="num-cell" style="text-align: right;">0.00066</td>
+              <td class="num-cell" style="text-align: right;">0.7559</td>
+              <td>Best validation score, largest train&ndash;validation gap</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note" style="margin-top: 0.5rem;">
+        Train@best Recall is measured on a seeded 512-pair train monitor, not the full training gallery.
+      </p>
+
+      <figure class="figure">
+        <img src="static/images/fig_validation_retrieval.svg" alt="Validation Recall at 1 by adaptation group: G_frozen 0.01054 image-to-text and 0.00922 text-to-image with 721,408 trainable parameters; PEFT 0.01910 in both directions with 1,016,320 parameters; partial end-to-end 0.02503 in both directions with 58,803,968 parameters. Chance is 0.000659." loading="lazy">
+        <figcaption>Figure 3. Validation Recall@1 by adaptation group, with trainable-parameter cost and the chance line.</figcaption>
+      </figure>
+
+      <figure class="figure">
+        <img src="static/images/fig_train_val_gap.svg" alt="Train versus validation Recall at 1 at each run's best epoch: G_frozen train 0.0586 versus validation 0.01054; PEFT train 0.1738 versus validation 0.01910; partial end-to-end train 0.7559 versus validation 0.02503, showing memorization." loading="lazy">
+        <figcaption>Figure 4. Train&ndash;validation gap at the best epoch. The partial end-to-end run reaches the best validation score while memorizing the training split.</figcaption>
+      </figure>
+
+      <div class="note-block">
+        <p style="margin: 0;">
+          <strong>Why PEFT is the default.</strong> It provides most of the practical alignment gain with roughly 1.7% of the
+          trainable parameters in the partial end-to-end recipe and a smaller train&ndash;validation gap. It is <em>not</em> selected
+          solely because it has the highest validation Recall@1.
+        </p>
+      </div>
+
+      <h3 class="title is-5" style="margin-top: 2.5rem;">Held-out results</h3>
+      <p>
+        The sealed test contains 3,189 pairs. Chance Recall@1 is 0.000314; the mean shuffled image&rarr;text Recall@1 is
+        0.000439. The encoder is <code>plus_g_peft_001</code> with the disease and ITM heads attached.
+      </p>
+
+      <figure class="figure">
+        <img src="static/images/fig_test_retrieval.svg" alt="Sealed test retrieval: image to text Recall at 1, 5, 10 equals 0.00878, 0.03857, 0.05864; text to image equals 0.01035, 0.04265, 0.07244. Chance Recall at 1 is 0.000314." loading="lazy">
+        <figcaption>Figure 5. Sealed-test bidirectional retrieval, roughly 28&times; and 33&times; chance at Recall@1.</figcaption>
+      </figure>
+
+      <div class="content table-scroll">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr><th>Task</th><th>Metric</th><th style="text-align: right;">Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Image&rarr;text retrieval</td><td>R@1</td><td class="num-cell" style="text-align: right;">0.00878</td></tr>
+            <tr><td>Image&rarr;text retrieval</td><td>R@5</td><td class="num-cell" style="text-align: right;">0.03857</td></tr>
+            <tr><td>Image&rarr;text retrieval</td><td>R@10</td><td class="num-cell" style="text-align: right;">0.05864</td></tr>
+            <tr><td>Text&rarr;image retrieval</td><td>R@1</td><td class="num-cell" style="text-align: right;">0.01035</td></tr>
+            <tr><td>Text&rarr;image retrieval</td><td>R@5</td><td class="num-cell" style="text-align: right;">0.04265</td></tr>
+            <tr><td>Text&rarr;image retrieval</td><td>R@10</td><td class="num-cell" style="text-align: right;">0.07244</td></tr>
+            <tr><td>Disease, image-only</td><td>macro-AUROC</td><td class="num-cell" style="text-align: right;">0.71172</td></tr>
+            <tr><td>Disease, image-only</td><td>macro-F1</td><td class="num-cell" style="text-align: right;">0.20448</td></tr>
+            <tr><td>Disease, text-only</td><td>macro-AUROC</td><td class="num-cell" style="text-align: right;">0.85892</td></tr>
+            <tr><td>Disease, text-only</td><td>macro-F1</td><td class="num-cell" style="text-align: right;">0.48181</td></tr>
+            <tr><td>Image&ndash;text matching</td><td>AUROC</td><td class="num-cell" style="text-align: right;">0.69425</td></tr>
+            <tr><td>Image&ndash;text matching</td><td>Accuracy</td><td class="num-cell" style="text-align: right;">0.64189</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="figure">
+        <img src="static/images/fig_disease_itm.svg" alt="Disease head and matching head on the sealed test: disease image-only macro-AUROC 0.7117 and macro-F1 0.2045; disease text-only macro-AUROC 0.8589 and macro-F1 0.4818; image-text matching AUROC 0.6942 and accuracy 0.6419 over 6,378 pairs." loading="lazy">
+        <figcaption>Figure 6. Auxiliary heads on the sealed test. Text-only disease performance is higher because the 14 labels are derived from report text.</figcaption>
+      </figure>
+
+      <h3 class="title is-5" style="margin-top: 2.5rem;">Ablations</h3>
+      <div class="content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr><th>Ablation</th><th>Comparison</th><th>Validation result</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>A2: adaptation on/off</td>
+              <td><code>G_frozen</code> versus PEFT, same Findings + Impression recipe</td>
+              <td class="num-cell">i&rarr;t R@1 0.01054 &rarr; 0.01910</td>
+            </tr>
+            <tr>
+              <td>A1: text section</td>
+              <td>Findings + Impression versus Findings-only</td>
+              <td class="num-cell">Findings-only i&rarr;t R@1 0.03297 on 364 validation pairs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="figure">
+        <img src="static/images/fig_ablations.svg" alt="Two ablations. Adaptation off gives validation image-to-text Recall at 1 of 0.01054 and adaptation on gives 0.01910. Findings plus Impression gives 0.01910 over 1,518 validation pairs against 0.03297 for Findings-only over 364 validation pairs." loading="lazy">
+        <figcaption>Figure 7. Ablations A2 and A1. The findings-only run uses a smaller gallery and a different sample availability rule.</figcaption>
+      </figure>
+
+      <div class="note-block">
+        <p style="margin: 0;">
+          The findings-only ablation uses a smaller validation gallery and a different sample availability rule, so its absolute
+          Recall@1 is not directly comparable with the main validation table. It is approximately 12&times; its own chance level
+          of 0.00275.
+        </p>
+      </div>
+
+      <h3 class="title is-5" style="margin-top: 2.5rem;">Evaluation safeguards</h3>
+      <div class="content">
+        <ul>
+          <li>Training and model selection use validation only.</li>
+          <li>Test rows are refused by the standard data loader unless the evaluation script explicitly enables test access.</li>
+          <li>Retrieval is compared with exact-gallery chance and a five-run shuffled-pair control.</li>
+          <li>Disease metrics use the predeclared U-Ignore mask.</li>
+          <li>After validation-only selection, the held-out test is evaluated once with the selected PEFT encoder plus disease and ITM heads.</li>
+          <li>Those test metrics are not used for tuning.</li>
+        </ul>
+      </div>
+
+      <h3 class="title is-5" style="margin-top: 2.5rem;">Interpretation</h3>
+      <div class="content">
+        <ul>
+          <li>Retrieval is well above chance and the shuffled control, but absolute Recall@1 remains low. This is expected for a controlled 15,000-pair subset and an exact-study gallery.</li>
+          <li>Partial end-to-end training achieves the best validation retrieval score but shows clear memorization risk.</li>
+          <li>Text-only disease performance is much higher because the 14 labels are derived from report text; this is not evidence that text embeddings are clinically superior to image embeddings.</li>
+          <li>The results support a documented research pipeline and a usable shared embedding, not diagnostic deployment.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Embedding API</h2>
+      <p>
+        The main reusable output is a shared embedding space. Callers own preprocessing: image callers supply
+        ImageNet-normalized <code>(B, 3, 224, 224)</code> tensors, text callers supply token IDs and attention masks. Both
+        functions return L2-normalized 256-dimensional embeddings, so image and text vectors are directly comparable by cosine
+        similarity.
+      </p>
+
+      <figure class="figure">
+        <img src="static/images/fig_embed_api.svg" alt="Schematic of the embedding API contract: image or text inputs enter embed_image or embed_text and leave as L2-normalized 256-dimensional vectors that are directly comparable by cosine similarity." loading="lazy">
+        <figcaption>Figure 8. Interface contract for the shared embedding space.</figcaption>
+      </figure>
+
+      <div class="pre-block" style="margin-top: 1.25rem;"><pre><code>from transformers import AutoTokenizer
+from src.api import load_dual_encoder, embed_image, embed_text
+
+device = "cuda:0"
+model = load_dual_encoder(device=device)
+tokenizer = AutoTokenizer.from_pretrained(
+    "models/Bio_ClinicalBERT", local_files_only=True
+)
+
+# Image caller supplies ImageNet-normalized (B, 3, 224, 224) tensors.
+image_embedding = embed_image(model, pixel_values)
+
+# Text caller supplies token IDs and attention masks.
+text_embedding = embed_text(
+    model,
+    batch["input_ids"].to(device),
+    batch["attention_mask"].to(device),
+)</code></pre></div>
+
+      <p class="foot-note" style="margin-top: 0.75rem;">
+        See <code>docs/embed_api.md</code> in the repository for checkpoint behavior, preprocessing ownership, and PEFT loading details.
+      </p>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Reproduce</h2>
+
+      <h3 class="title is-5">Prerequisites</h3>
+      <div class="content">
+        <ul>
+          <li>A licensed CheXpert Plus download, including the source CSV, DICOM files, and CheXbert label file.</li>
+          <li>The local, non-public <code>chexpert_plus_subset/manifest.csv</code> created for this study.</li>
+          <li>One CUDA-capable GPU.</li>
+          <li>Python 3.11 and a virtual environment.</li>
+          <li>The pinned PyTorch and torchvision wheels target CUDA 12.8; install matching wheels for your platform before <code>pip install -r requirements.txt</code>.</li>
+        </ul>
+      </div>
+
+      <div class="pre-block"><pre><code>git clone https://github.com/codewith-rafi/radpair.git
+cd radpair
+python -m venv .venv
+source .venv/bin/activate
+
+# Install the PyTorch wheels for your platform first, then:
+pip install -r requirements.txt
+huggingface-cli download emilyalsentzer/Bio_ClinicalBERT \
+  --local-dir models/Bio_ClinicalBERT
+
+export RADPAIR_ROOT="$(pwd)"
+export CHEXPERT_PLUS_ROOT=/path/to/chexpert_plus</code></pre></div>
+
+      <h3 class="title is-5" style="margin-top: 2rem;">Data build</h3>
+      <div class="pre-block"><pre><code>python scripts/write_plus_split_manifest.py \
+  --split train --out data/processed/plus_train_manifest.csv
+python scripts/write_plus_split_manifest.py \
+  --split val --out data/processed/plus_val_manifest.csv
+
+python scripts/join_plus_chexbert_and_stats.py
+python scripts/build_plus_test_manifest.py
+
+# Cache train/validation images.
+python scripts/cache_plus_chambon_jpg.py
+
+# Cache held-out test images through the same preprocessing path.
+python scripts/cache_plus_chambon_jpg.py \
+  --train_manifest data/processed/plus_test_manifest.csv \
+  --val_manifest data/processed/plus_test_manifest.csv</code></pre></div>
+
+      <h3 class="title is-5" style="margin-top: 2rem;">Training and evaluation</h3>
+      <div class="pre-block"><pre><code>export CUDA_VISIBLE_DEVICES=0
+
+# Three comparison groups.
+python scripts/train_plus_g1.py --config configs/plus_g1.yaml
+python scripts/train_plus_g_peft.py --config configs/plus_g_peft.yaml
+python scripts/train_plus_g_e2e.py --config configs/plus_g_e2e.yaml
+
+# Auxiliary heads on frozen PEFT embeddings.
+python scripts/train_plus_disease.py --config configs/plus_disease.yaml
+python scripts/train_plus_itm.py --config configs/plus_itm.yaml
+
+# Validation analyses.
+python scripts/eval_plus_missing_modality.py \
+  --config configs/plus_missing_modality.yaml
+
+# One-shot held-out evaluation after all choices are fixed.
+python scripts/eval_plus_sealed_test.py \
+  --config configs/plus_sealed_test.yaml</code></pre></div>
+
+      <p class="foot-note" style="margin-top: 0.75rem;">
+        To regenerate the reported tables without retraining, place locally stored checkpoints under the corresponding experiment
+        directories and verify their SHA256 hashes before use.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Repository Map</h2>
+      <div class="content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <tbody>
+            <tr><th style="width: 30%;"><code>src/models/</code></th><td>Dual encoder, disease head, and ITM head</td></tr>
+            <tr><th><code>src/losses/</code></th><td>Symmetric InfoNCE and masked BCE</td></tr>
+            <tr><th><code>src/data/</code></th><td>Manifest loading, U-Ignore parsing, and preprocessing</td></tr>
+            <tr><th><code>src/eval/</code></th><td>Recall@K implementation</td></tr>
+            <tr><th><code>src/api/</code></th><td>Reusable embedding interface</td></tr>
+            <tr><th><code>scripts/</code></th><td>Data, training, and evaluation entry points</td></tr>
+            <tr><th><code>configs/</code></th><td>Run configurations</td></tr>
+            <tr><th><code>experiments/</code></th><td>Metrics, logs, configuration snapshots, and consolidated result tables</td></tr>
+            <tr><th><code>chexpert_plus_subset/</code></th><td>Public-safe aggregate metadata only</td></tr>
+            <tr><th><code>docs/</code></th><td>API documentation and visual-asset guidance</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="title is-5" style="margin-top: 2rem;">Data governance</h3>
+      <div class="content">
+        <ul>
+          <li>Obtain <a href="https://stanfordaimi.azurewebsites.net/datasets/5158c524-d3ab-4e02-96e9-6ee9efc110a1" target="_blank" rel="noopener">CheXpert Plus</a> directly from Stanford AIMI and comply with its access terms.</li>
+          <li>Set <code>CHEXPERT_PLUS_ROOT</code> to the licensed local dump.</li>
+          <li>Never commit patient-level images, DICOM files, report-text CSVs, manifests, or derived patient identifiers.</li>
+          <li>The repository intentionally ships only aggregate metadata and experiment results: no patient images, report text, manifests, or model binaries.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light" id="citation">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code" class="pre-block"><code>@misc{RadPair2026,
+  title        = {RadPair: Cross-Modal Alignment and Unified Representation Methods for Medical Imaging and Clinical Text Data},
+  author       = {Ahmed, Rafi},
+  year         = {2026},
+  howpublished = {\url{https://codewith-rafi.github.io/radpair/}},
+  note         = {Code and experiments: \url{https://github.com/codewith-rafi/radpair}},
+  keywords     = {contrastive learning, chest X-ray, radiology report, CheXpert Plus}
+}</code></pre>
+      <p class="foot-note" style="margin-top: 0.75rem;">
+        Cite the software repository and this project page. Patient-level data are never redistributed; the licensed CheXpert Plus
+        dump must be obtained separately.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">References</h2>
+      <div class="content">
+        <ol>
+          <li>A. Radford et al., &ldquo;Learning Transferable Visual Models From Natural Language Supervision,&rdquo; in <em>Proc. ICML</em>, 2021. <a href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener">arXiv:2103.00020</a></li>
+          <li>Y. Zhang, H. Jiang, Y. Miura, C. D. Manning, and C. P. Langlotz, &ldquo;Contrastive Learning of Medical Visual Representations from Paired Images and Text,&rdquo; in <em>Proc. Machine Learning for Healthcare (MLHC)</em>, 2022. <a href="https://arxiv.org/abs/2010.00747" target="_blank" rel="noopener">arXiv:2010.00747</a></li>
+          <li>S.-C. Huang, L. Shen, M. P. Lungren, and S. Yeung, &ldquo;GLoRIA: A Multimodal Global-Local Representation Learning Framework for Label-efficient Medical Image Recognition,&rdquo; in <em>Proc. ICCV</em>, 2021.</li>
+          <li>E. Tiu, E. Talius, P. Patel, C. P. Langlotz, A. Y. Ng, and P. Rajpurkar, &ldquo;Expert-level detection of pathologies from unannotated chest X-ray images via self-supervised learning,&rdquo; <em>Nature Biomedical Engineering</em>, vol. 6, pp. 1399&ndash;1406, 2022.</li>
+          <li>P. Chambon, J.-B. Delbrouck, T. Sounack, S.-C. Huang, Z. Chen, M. Varma, S. Q. Truong, C. T. Chuong, and C. P. Langlotz, &ldquo;CheXpert Plus: Augmenting a Large Chest X-ray Dataset with Text Radiology Reports, Patient Demographics and Additional Image Formats,&rdquo; 2024. <a href="https://arxiv.org/abs/2405.19538" target="_blank" rel="noopener">arXiv:2405.19538</a></li>
+          <li>J. Irvin et al., &ldquo;CheXpert: A Large Chest Radiograph Dataset with Uncertainty Labels and Expert Comparison,&rdquo; in <em>Proc. AAAI</em>, 2019. <a href="https://arxiv.org/abs/1901.07031" target="_blank" rel="noopener">arXiv:1901.07031</a></li>
+          <li>K. You, J. Gu, J. Ham, B. Park, J. Kim, E. K. Hong, W. Baek, and B. Roh, &ldquo;CXR-CLIP: Toward Large Scale Chest X-ray Language-Image Pre-training,&rdquo; in <em>Proc. MICCAI</em>, 2023. <a href="https://arxiv.org/abs/2310.13292" target="_blank" rel="noopener">arXiv:2310.13292</a></li>
+          <li>Z. Wang, Z. Wu, D. Agarwal, and J. Sun, &ldquo;MedCLIP: Contrastive Learning from Unpaired Medical Images and Text,&rdquo; in <em>Findings of EMNLP</em>, 2022. <a href="https://arxiv.org/abs/2210.10163" target="_blank" rel="noopener">arXiv:2210.10163</a></li>
+        </ol>
+      </div>
+
+      <hr class="section-rule">
+
+      <h2 class="title is-3">Contact</h2>
+      <div class="content">
+        <p>
+          <strong>Rafi Ahmed</strong><br>
+          Research Assistant, Machine Intelligence Lab, Sichuan University<br>
+          <a href="mailto:codewithrafi@outlook.com">codewithrafi@outlook.com</a> &middot;
+          <a href="https://github.com/codewith-rafi" target="_blank" rel="noopener">GitHub</a> &middot;
+          <a href="https://www.machineilab.org" target="_blank" rel="noopener">www.machineilab.org</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p class="foot-note">
+              RadPair &middot; Machine Intelligence Lab, Sichuan University &middot;
+              <a href="https://github.com/codewith-rafi/radpair" target="_blank" rel="noopener">github.com/codewith-rafi/radpair</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  </main>
+</body>
+</html>
